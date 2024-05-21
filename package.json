@@ -13,6 +13,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@solidjs/router": "^0.13.3",
     "@tauri-apps/api": "^1",
     "@unocss/reset": "^0.60.3",
     "solid-js": "^1.7.8"
@@ -22,6 +23,7 @@
     "@iconify/utils": "^2.1.23",
     "@tauri-apps/cli": "^1",
     "@unocss/eslint-plugin": "^0.60.2",
+    "@unocss/transformer-directives": "^0.60.3",
     "eslint": "9.2.0",
     "typescript": "^5.0.2",
     "unocss": "^0.60.3",

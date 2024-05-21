@@ -1,5 +1,6 @@
 import { defineConfig, presetIcons, presetUno } from 'unocss'
 import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
+import transformerDirectives from '@unocss/transformer-directives'
 
 export default defineConfig({
   presets: [
@@ -15,11 +16,22 @@ export default defineConfig({
       },
     }),
   ],
-  transformers: [],
+  transformers: [
+    transformerDirectives(),
+  ],
   theme: {
     // 定义主题
     colors: {
-      brand: '#51E8E8',
+      text1: '#171717',
+      text2: '#6b7280',
+      fill1: '#ffffff',
+      fill2: '#f3f4f6',
+      sidebar: '#f3f4f6',
+      border: '#d1d5db',
+      accent: '#3b82f6',
+      success: '#10b981',
+      warning: '#fbbf24',
+      danger: '#ef4444',
     },
   },
   shortcuts: {

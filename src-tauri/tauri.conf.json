@@ -2,7 +2,7 @@
   "build": {
     "beforeDevCommand": "bun run dev",
     "beforeBuildCommand": "bun run build",
-    "devPath": "http://localhost:1420",
+    "devPath": "http://localhost:1420/",
     "distDir": "../dist"
   },
   "package": {
@@ -19,9 +19,9 @@
     },
     "windows": [
       {
-        "title": "tauri-app",
-        "width": 800,
-        "height": 600
+        "title": "UltraPhx 客户端",
+        "minWidth": 1024,
+        "minHeight": 768
       }
     ],
     "security": {
