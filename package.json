@@ -1,0 +1,31 @@
+{
+  "name": "tauri-app",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "",
+  "license": "MIT",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "tauri": "tauri",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^1",
+    "@unocss/reset": "^0.60.3",
+    "solid-js": "^1.7.8"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.18.1",
+    "@iconify/utils": "^2.1.23",
+    "@tauri-apps/cli": "^1",
+    "@unocss/eslint-plugin": "^0.60.2",
+    "eslint": "9.2.0",
+    "typescript": "^5.0.2",
+    "unocss": "^0.60.3",
+    "vite": "^5.0.0",
+    "vite-plugin-solid": "^2.8.0"
+  }
+}
