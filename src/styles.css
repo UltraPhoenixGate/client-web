@@ -3,8 +3,7 @@
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
-
-  @apply text-text1 bg-fill1;
+  @apply text-text1;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -16,4 +15,13 @@
 * {
   user-select: none;
   -webkit-user-select: none;
+}
+
+body {
+  background-color: transparent;
+}
+
+#root {
+  @apply bg-fill1 border-1px border-border shadow-2xl rounded-8px h-screen;
+  overflow: hidden;
 }

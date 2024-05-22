@@ -4,7 +4,7 @@ import { Header } from '@/components/header'
 
 export function BaseLayout(props: RouteSectionProps) {
   return (
-    <div class="h-100vh w-full col">
+    <div class="h-full w-full col">
       <Header />
       <main class="h-full row flex-1">
         <Menu />

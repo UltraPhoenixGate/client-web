@@ -1,19 +1,22 @@
 import { defineConfig, presetIcons, presetUno } from 'unocss'
-import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
+// import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
 import transformerDirectives from '@unocss/transformer-directives'
 
 export default defineConfig({
+  content: {
+    filesystem: ['./src/**/*.{ts,tsx}'],
+  },
   presets: [
     // 基础预设（Tailwind）
     presetUno(),
     // css 图标预设
     presetIcons({
       prefix: 'i-',
-      collections: {
-        // 引入 ./public/icons 目录下的所有 svg 图标
-        // 使用方式：<i class="i-custom:filename"></i>
-        custom: FileSystemIconLoader('./public/icons'),
+      extraProperties: {
+        'display': 'inline-block',
+        'vertical-align': 'middle',
       },
+      // cdn: 'https://esm.sh/',
     }),
   ],
   transformers: [
