@@ -4,7 +4,9 @@ export function Card(props: ParentProps<{
   class?: string
 }>) {
   return (
-    <div class={`rounded-lg bg-fill1 p-4 shadow ${props.class}`}>
+    <div
+      class={`rounded-lg bg-fill1 p-4 shadow ${props.class}`}
+    >
       {props.children}
     </div>
   )
