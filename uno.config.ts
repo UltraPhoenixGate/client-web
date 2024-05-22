@@ -44,5 +44,6 @@ export default defineConfig({
     col: 'flex flex-col',
     centerRow: 'row items-center',
     centerCol: 'col items-center',
+    title: 'text-xl text-text1 font-bold',
   },
 })
