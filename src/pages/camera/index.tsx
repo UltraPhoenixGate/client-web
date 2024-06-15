@@ -1,4 +1,4 @@
-import { Button } from '@/components/button'
+import { Button } from '@/components/Button'
 import { openModal } from '@/utils/modalManager'
 
 export default function Home() {

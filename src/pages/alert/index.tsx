@@ -1,5 +1,5 @@
 import { useClient } from '@/context/ClientContext'
-import { Table } from '@/components/table'
+import { Table } from '@/components/Table'
 import { useRequest } from '@/hooks/useRequest'
 
 export default function Home() {

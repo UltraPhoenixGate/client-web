@@ -1,9 +1,9 @@
 import { For, Show } from 'solid-js'
 import { ConnectNew } from './components/ConnectNew'
-import { Card } from '@/components/card'
+import { Card } from '@/components/Card'
 import { useClient } from '@/context/ClientContext'
 import { useRequest } from '@/hooks/useRequest'
-import Button from '@/components/button'
+import Button from '@/components/Button'
 import { openModal } from '@/utils/modalManager'
 
 export default function Home() {
@@ -14,15 +14,11 @@ export default function Home() {
     })
   }
 
-  // dev only: reopen modal when hot reload
-  if (import.meta.hot)
-    connectNewClient()
-
   const { client } = useClient()
   const { data: clients, loading } = useRequest(client.client.getConnectedClients, {})
   return (
     <div class="p-4">
-      <div class="row justify-between">
+      <div class="centerRow justify-between">
         <h1 class="title">已接入设备</h1>
         <div>
           <Button type="primary" onClick={connectNewClient}>连接新设备</Button>

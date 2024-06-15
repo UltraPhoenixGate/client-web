@@ -1,8 +1,8 @@
 import { render } from 'solid-js/web'
 import type { JSX } from 'solid-js'
 import { Show, createSignal } from 'solid-js'
-import type { ModalProps } from '@/components/modal'
-import Modal from '@/components/modal'
+import type { ModalProps } from '@/components/Modal'
+import Modal from '@/components/Modal'
 
 interface ShowModalOptions extends ModalProps {
   customModal?: (props: ModalProps) => JSX.Element

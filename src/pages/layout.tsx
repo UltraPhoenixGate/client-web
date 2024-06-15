@@ -1,6 +1,6 @@
 import type { RouteSectionProps } from '@solidjs/router'
-import { Menu } from '@/components/menu'
-import { Header } from '@/components/header'
+import { Menu } from '@/components/Menu'
+import { Header } from '@/components/Header'
 
 export function BaseLayout(props: RouteSectionProps) {
   return (

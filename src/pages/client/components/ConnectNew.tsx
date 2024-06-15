@@ -1,6 +1,6 @@
 export function ConnectNew() {
   return (
-    <div class="w-800px col">
+    <div class="max-w-800px w-60vw col">
       ConnectNew28
     </div>
   )
