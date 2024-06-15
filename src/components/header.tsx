@@ -6,14 +6,14 @@ import { isApp } from '@/store'
 export function Header() {
   const { status } = useClient()
   return (
-    <header class="bg-fill2 col shrink-0">
+    <header class="col shrink-0 bg-fill2">
       <Show when={isApp}>
         <WindowDecoration />
       </Show>
       <div data-tauri-drag-region class="h-12 centerRow justify-between border-b px-6">
-        <h1 class="text-text1 text-base font-bold">Ultra Phoenix</h1>
+        <h1 class="text-base text-text1 font-bold">Ultra Phoenix</h1>
         <div>
-          <div class="text-text2 centerRow gap-2">
+          <div class="centerRow gap-2 text-text2">
             <div
               classList={{
                 'bg-success': status() === 'connected',
@@ -50,7 +50,7 @@ function WindowDecoration() {
     <div
       data-tauri-drag-region
       style={{
-        height: '24px',
+        height: 'auto',
       }}
       class="centerRow justify-end"
     >
@@ -70,7 +70,7 @@ function WindowButton({ iconClass, onClick }: {
   return (
     <button
       onClick={onClick}
-      class="hover:bg-accent bg-transparent px-3 py-2 hover:bg-op-20"
+      class="bg-transparent px-3 py-2 hover:bg-accent hover:bg-op-20"
     >
       <span class={iconClass}></span>
     </button>

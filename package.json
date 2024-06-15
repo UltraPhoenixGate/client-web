@@ -19,7 +19,7 @@
     "@unocss/reset": "^0.60.3",
     "dayjs": "^1.11.11",
     "solid-js": "^1.7.8",
-    "ultraphx-js-sdk": "^0.1.7"
+    "ultraphx-js-sdk": "^0.1.8"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.18.1",

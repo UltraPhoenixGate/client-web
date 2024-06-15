@@ -1,6 +1,11 @@
-import { defineConfig, presetIcons, presetUno } from 'unocss'
-// import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
-import transformerDirectives from '@unocss/transformer-directives'
+import {
+  defineConfig,
+  presetAttributify,
+  presetIcons,
+  presetUno,
+  transformerAttributifyJsx,
+  transformerDirectives,
+} from 'unocss'
 
 export default defineConfig({
   content: {
@@ -18,9 +23,11 @@ export default defineConfig({
       },
       // cdn: 'https://esm.sh/',
     }),
+    presetAttributify(),
   ],
   transformers: [
     transformerDirectives(),
+    transformerAttributifyJsx(),
   ],
   theme: {
     // 定义主题

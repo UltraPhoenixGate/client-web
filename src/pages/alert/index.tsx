@@ -26,7 +26,14 @@ function AlertRecords() {
         columns={[
           {
             key: 'clientID',
-            title: '客户端ID',
+            title: '设备名称',
+            render(_value, data) {
+              return (
+                <span>
+                  {data.client.name}
+                </span>
+              )
+            },
           },
           {
             key: 'ruleName',
