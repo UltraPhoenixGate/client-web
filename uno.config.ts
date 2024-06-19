@@ -23,11 +23,11 @@ export default defineConfig({
       },
       // cdn: 'https://esm.sh/',
     }),
-    presetAttributify(),
+    // presetAttributify(),
   ],
   transformers: [
     transformerDirectives(),
-    transformerAttributifyJsx(),
+    // transformerAttributifyJsx(),
   ],
   theme: {
     // 定义主题
@@ -52,5 +52,7 @@ export default defineConfig({
     centerRow: 'row items-center',
     centerCol: 'col items-center',
     title: 'text-xl text-text1 font-bold',
+    textVCenter: 'children:inline-block children:align-middle',
+    textVCenterFlex: 'flex items-center',
   },
 })

@@ -5,17 +5,16 @@ import { config } from '@/store'
 
 export type ClientStatus = 'connected' | 'disconnected' | 'connecting'
 
+export const client = createSdkClient({
+  baseUrl: config.backendUrl,
+  token: config.token,
+})
+
 function useClientState() {
   const [status, setStatus] = createSignal<ClientStatus>('connecting')
-  const client = createSdkClient({
-    baseUrl: config.backendUrl,
-    token: config.token,
-  })
-
   client.ws.onConnect(() => setStatus('connected'))
   client.ws.onDisconnect(() => setStatus('disconnected'))
   client.ws.onError(() => setStatus('disconnected'))
-
   return {
     status,
     client,

@@ -20,11 +20,11 @@ function Modal(props: ModalProps) {
   return (
     <Show when={isVisible()}>
       <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div class="min-w-96 col rounded-lg bg-white p-6 shadow-lg">
-          <div class="centerRow justify-between border-b pb-2 text-xl font-semibold">
+        <div class="min-w-96 col bg-white p-6 shadow-lg">
+          <div class="centerRow justify-between pb-2 text-xl font-semibold">
             <h3>{props.title}</h3>
             <Button class="" onClick={closeModal}>
-              &times;
+              <i class="i-fluent:dismiss-16-regular" />
             </Button>
           </div>
           <div class="mt-4">{props.content}</div>

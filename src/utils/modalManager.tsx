@@ -1,6 +1,6 @@
 import { render } from 'solid-js/web'
 import type { JSX } from 'solid-js'
-import { Show, createSignal } from 'solid-js'
+import { Show, createContext, createSignal } from 'solid-js'
 import type { ModalProps } from '@/components/Modal'
 import Modal from '@/components/Modal'
 
@@ -38,6 +38,7 @@ export function openModal(options: ShowModalOptions) {
     }, 300) // Ensure the modal close animation completes
   }
   const ModalImpl = options.customModal || Modal
+
   render(
     () => (
       <Show when={isOpen()}>
@@ -50,4 +51,11 @@ export function openModal(options: ShowModalOptions) {
   return {
     close: closeModal,
   }
+}
+
+export function errorModal(message: string) {
+  openModal({
+    title: '错误',
+    content: <div class="text-red-600">{message}</div>,
+  })
 }

@@ -4,28 +4,34 @@ import { For } from 'solid-js'
 interface IMenuItem {
   name: string
   url: string
+  icon?: string
 }
 
 const menus: IMenuItem[] = [
   {
     name: '概览',
     url: '/dashboard',
+    icon: 'i-fluent:home-24-regular',
   },
   {
     name: '设备',
     url: '/client',
+    icon: 'i-fluent:device-eq-24-regular',
   },
   {
     name: '警报',
     url: '/alert',
+    icon: 'i-fluent:alert-24-regular',
   },
   {
     name: '监控',
     url: '/camera',
+    icon: 'i-fluent:video-24-regular',
   },
   {
     name: '设置',
     url: '/setting',
+    icon: 'i-fluent:settings-24-regular',
   },
 ]
 
@@ -54,12 +60,13 @@ function MenuItem(props: {
   return (
     <A href={props.menu.url}>
       <li
-        class="rounded-md px-4 py-2 text-text2 hover:bg-gray-300 hover:text-text1"
+        class="flex rounded-md px-4 py-2 text-base text-text2 hover:bg-gray-300 hover:text-text1"
         classList={{
           'text-text1! bg-gray-200': props.active,
         }}
       >
-        {props.menu.name}
+        <i class={`text-1.5em mr-3 ${props.menu.icon}`} />
+        <span>{props.menu.name}</span>
       </li>
     </A>
   )
