@@ -17,6 +17,7 @@ export function useRequest<Parma, Res>(fn: (p: Parma) => Promise<Res>, initialPa
       batch(() => {
         setError(err)
         setLoading(false)
+        console.log(err)
       })
     })
   }

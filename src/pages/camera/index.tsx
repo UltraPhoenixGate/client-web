@@ -1,10 +1,9 @@
-import { For, Show } from 'solid-js'
+import { For, Show, createSignal, onMount } from 'solid-js'
+import type { Camera } from 'ultraphx-js-sdk'
 import { ConnectNew } from './components/ConnectNew'
 import { useModal } from '@/utils/modalManager'
 import { Button } from '@/components/Button'
-import { useClient } from '@/context/ClientContext'
-import { useRequest } from '@/hooks/useRequest'
-import { Card } from '@/components/Card'
+import { client } from '@/context/ClientContext'
 
 export default function Home() {
   return (
@@ -17,6 +16,7 @@ export default function Home() {
 function CameraList() {
   const {
     openModal,
+    errorModal,
   } = useModal()
   function connectNewCamera() {
     openModal({
@@ -24,9 +24,24 @@ function CameraList() {
       content: ConnectNew,
     })
   }
-  const { client } = useClient()
-  
-  const { data, loading } = useRequest(client.camera.getCameras, {})
+  const [list, setList] = createSignal<Camera[]>([])
+  const [loading, setLoading] = createSignal(true)
+  function refresh() {
+    setLoading(true)
+    client.camera.getCameras().then((res) => {
+      setList(res.cameras)
+    }).catch((err) => {
+      errorModal(err.message)
+    }).finally(() => {
+      setLoading(false)
+    })
+  }
+  onMount(() => {
+    refresh()
+  })
+  // client.camera.getCameras().then((res) => {
+  //   console.log(res)
+  // })
   return (
     <div>
       <div class="centerRow justify-between">
@@ -46,14 +61,56 @@ function CameraList() {
         <Show when={loading()}>
           <div class="col-span-3 text-center">加载中...</div>
         </Show>
-        <For each={data()?.cameras || []}>
-          {client => (
-            <Card>
-              <div class="text-lg">{client.name}</div>
-              <div class="text-sm text-text2">{client.description}</div>
-            </Card>
+        <For each={list() || []}>
+          {camera => (
+            <CameraItem camera={camera} />
           )}
         </For>
+      </div>
+    </div>
+  )
+}
+
+function CameraItem(props: {
+  camera: Camera
+}) {
+  const [currentFrame, setCurrentFrame] = createSignal<string>('')
+  const [loading, setLoading] = createSignal(true)
+
+  function getFrame() {
+    setLoading(true)
+    client.camera.getCurrentFrame(props.camera.streamUrl).then((res) => {
+      setCurrentFrame(res.image)
+    }).finally(() => {
+      setLoading(false)
+    })
+  }
+
+  onMount(() => {
+    getFrame()
+
+    setInterval(() => {
+      getFrame()
+    }, 30000)
+  })
+
+  return (
+    <div class="relative w-full pt-60%">
+      <div class="absolute inset-0">
+        <div class="bg-gray-200 p-2">
+          <h3 class="text-base text-black font-semibold">
+            {props.camera.name}
+          </h3>
+        </div>
+        {loading()
+          ? (
+            <div class="h-full flex items-center justify-center bg-gray-300">
+              <i class="i-svg-spinners:bars-scale-fade text-gray-700" />
+            </div>
+            )
+          : (
+            <img src={currentFrame()} class="h-full w-full" alt="Camera Frame"></img>
+            )}
       </div>
     </div>
   )

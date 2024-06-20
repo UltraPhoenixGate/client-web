@@ -18,8 +18,9 @@
     "@tauri-apps/api": "^1",
     "@unocss/reset": "^0.60.3",
     "dayjs": "^1.11.11",
+    "hls.js": "^1.5.11",
     "solid-js": "^1.7.8",
-    "ultraphx-js-sdk": "^0.1.10"
+    "ultraphx-js-sdk": "^0.1.11"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.18.1",
