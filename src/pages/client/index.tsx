@@ -4,13 +4,16 @@ import { Card } from '@/components/Card'
 import { useClient } from '@/context/ClientContext'
 import { useRequest } from '@/hooks/useRequest'
 import Button from '@/components/Button'
-import { openModal } from '@/utils/modalManager'
+import { useModal } from '@/utils/modalManager'
 
 export default function Home() {
+  const {
+    openModal,
+  } = useModal()
   function connectNewClient() {
     openModal({
       title: '连接新设备',
-      content: ConnectNew(),
+      content: ConnectNew,
     })
   }
 

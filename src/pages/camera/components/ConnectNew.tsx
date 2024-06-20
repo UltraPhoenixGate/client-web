@@ -4,8 +4,8 @@ import { createStore } from 'solid-js/store'
 import Button from '@/components/Button'
 import { Form, FormItem } from '@/components/Form'
 import { Input } from '@/components/Input'
-import { client, useClient } from '@/context/ClientContext'
-import { errorModal, openModal } from '@/utils/modalManager'
+import { client } from '@/context/ClientContext'
+import { useModal } from '@/utils/modalManager'
 
 export function ConnectNew() {
   const [status, setStatus] = createSignal<'ChooseCamera' | 'SearchCamera' | 'AddCamera'>('ChooseCamera')
@@ -63,6 +63,10 @@ function SearchCamera() {
 
 function AddCamera() {
   const [formRef, setFormRef] = createSignal<HTMLFormElement>()
+  const {
+    openModal,
+    errorModal,
+  } = useModal()
   const [params, setParams] = createStore<AddCameraParams>({
     name: '',
     description: '',

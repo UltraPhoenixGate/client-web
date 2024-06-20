@@ -1,61 +1,71 @@
-import { render } from 'solid-js/web'
-import type { JSX } from 'solid-js'
-import { Show, createContext, createSignal } from 'solid-js'
-import type { ModalProps } from '@/components/Modal'
+import type { JSX, ParentComponent } from 'solid-js'
+import { For, createContext, createSignal, useContext } from 'solid-js'
 import Modal from '@/components/Modal'
+import type { ModalProps } from '@/components/Modal'
 
-interface ShowModalOptions extends ModalProps {
+interface ShowModalOptions {
+  id?: string
   customModal?: (props: ModalProps) => JSX.Element
+  content: (() => JSX.Element) | JSX.Element
+  title: string
+  onClose?: () => void
 }
 
-let modalsContainer: HTMLElement | null = null
+interface ModalContextType {
+  openModal: (options: ShowModalOptions) => string // 返回 modal 的 id
+  closeModal: (id: string) => void
+  errorModal: (message: string) => void
+}
 
-function ensureModalsContainer() {
-  if (!modalsContainer) {
-    modalsContainer = document.createElement('div')
-    document.body.appendChild(modalsContainer)
+const ModalContext = createContext<ModalContextType>()
+
+const ModalProvider: ParentComponent = (props) => {
+  const [modals, setModals] = createSignal<ShowModalOptions[]>([])
+
+  const openModal = (options: ShowModalOptions): string => {
+    const id = options.id || Math.random().toString(36).substr(2, 9)
+    setModals(prev => [...prev, { ...options, id }])
+    return id
   }
-}
 
-export function getModalsContainer() {
-  ensureModalsContainer()
-  return modalsContainer!
-}
-
-export function openModal(options: ShowModalOptions) {
-  ensureModalsContainer()
-
-  const div = document.createElement('div')
-  modalsContainer!.appendChild(div)
-
-  const [isOpen, setIsOpen] = createSignal(true)
-
-  const closeModal = () => {
-    setIsOpen(false)
-    options.onClose?.()
-    setTimeout(() => {
-      div.remove()
-    }, 300) // Ensure the modal close animation completes
+  const errorModal = (message: string) => {
+    openModal({
+      title: '错误',
+      content: () => message,
+    })
   }
-  const ModalImpl = options.customModal || Modal
 
-  render(
-    () => (
-      <Show when={isOpen()}>
-        <ModalImpl title={options.title} content={options.content} onClose={closeModal} />
-      </Show>
-    ),
-    div,
+  const closeModal = (id: string) => {
+    setModals(prev => prev.filter(modal => modal.id !== id))
+    const modal = modals().find(modal => modal.id === id)
+    modal?.onClose?.()
+  }
+
+  return (
+    <ModalContext.Provider value={{ openModal, closeModal, errorModal }}>
+      {props.children}
+      <For each={modals()}>
+        {(modalProps) => {
+          const ModalImpl = modalProps.customModal || Modal
+          return (
+            <ModalImpl
+              {...modalProps}
+              content={typeof modalProps.content === 'function' ? modalProps.content() : modalProps.content}
+              onClose={() => closeModal(modalProps.id!)}
+            />
+          )
+        }}
+      </For>
+    </ModalContext.Provider>
   )
-
-  return {
-    close: closeModal,
-  }
 }
 
-export function errorModal(message: string) {
-  openModal({
-    title: '错误',
-    content: <div class="text-red-600">{message}</div>,
-  })
+export function useModal() {
+  const context = useContext(ModalContext)
+  if (!context)
+    throw new Error('useModal must be used within a ModalProvider')
+
+  return context
 }
+
+export default ModalProvider
