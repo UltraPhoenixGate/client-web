@@ -1,5 +1,5 @@
-import { Match, Switch, createSignal } from 'solid-js'
-import type { AddCameraParams } from 'ultraphx-js-sdk'
+import { For, Match, Show, Switch, createSignal } from 'solid-js'
+import type { AddCameraParams, OnvifDevice } from 'ultraphx-js-sdk'
 import { createStore } from 'solid-js/store'
 import Button from '@/components/Button'
 import { Form, FormItem } from '@/components/Form'
@@ -54,9 +54,44 @@ function ChooseCamera({
 }
 
 function SearchCamera() {
+  const [devices, setDevices] = createSignal<OnvifDevice[]>([])
+  const [loading, setLoading] = createSignal(true)
+
+  function search() {
+    setLoading(true)
+    client.camera.scanOnvifDevices().then((res) => {
+      setDevices(res.devices)
+    }).catch((err) => {
+      console.error(err)
+    }).finally(() => {
+      setLoading(false)
+    })
+  }
+
+  search()
+
   return (
-    <div class="w-500px centerCol">
-      SearchCamera
+    <div class="min-h-200px w-500px centerCol">
+      <Show when={loading()}>
+        <p>正在本地网络中搜索...</p>
+      </Show>
+      <Show when={!loading()}>
+        <ul>
+          <Show when={devices().length === 0}>
+            <p>未找到可用设备</p>
+          </Show>
+          <For each={devices()}>
+            {device => (
+              <li>
+                <div>{device.name}</div>
+                <div>{device.manufacturer}</div>
+                <div>{device.model}</div>
+                <div>{device.xAddr}</div>
+              </li>
+            )}
+          </For>
+        </ul>
+      </Show>
     </div>
   )
 }
