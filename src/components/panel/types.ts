@@ -1,6 +1,4 @@
 export interface DataPanelConfig {
-  title?: string
-  description?: string
   source: DataSource
   render: RenderConfig
   refreshInterval?: number // 数据刷新间隔（秒）
@@ -21,8 +19,13 @@ export type TimeRange =
   | { type: 'last30days' }
 
 export interface RenderConfig {
+  title?: string
+  description?: string
   type: 'line' | 'bar' | 'pie' | 'card'
-  format?: string // 数据格式化字符串，例如：`0.00`、`0%`
+  /**
+   * 数据格式化配置
+   */
+  format?: Intl.NumberFormatOptions
   unit?: string // 数据单位，例如：`°C`, `m/s`
   options?: ChartOptions // 特定图表类型的额外配置
 }

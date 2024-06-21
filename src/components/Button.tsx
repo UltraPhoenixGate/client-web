@@ -15,7 +15,7 @@ export interface ButtonProps {
 export function Button(props: ButtonProps) {
   const [local, others] = splitProps(props, ['type', 'class', 'children', 'size', 'icon', 'htmlType'])
 
-  const baseClasses = 'flex items-center rounded outline-none transition-colors'
+  const baseClasses = 'flex items-center outline-none transition-colors'
   const typeClasses = {
     primary: 'bg-zinc-900 text-white hover:bg-gray-800 active:bg-gray-900',
     secondary: 'bg-gray-200 text-black hover:bg-gray-300 active:bg-gray-400',

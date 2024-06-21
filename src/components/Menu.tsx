@@ -60,7 +60,7 @@ function MenuItem(props: {
   return (
     <A href={props.menu.url}>
       <li
-        class="flex rounded-md px-4 py-2 text-base text-text2 hover:bg-gray-300 hover:text-text1"
+        class="flex px-4 py-2 text-base text-text2 hover:bg-gray-300 hover:text-text1"
         classList={{
           'text-text1! bg-gray-200': props.active,
         }}

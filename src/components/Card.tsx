@@ -5,7 +5,7 @@ export function Card(props: ParentProps<{
 }>) {
   return (
     <div
-      class={`rounded-lg bg-fill1 p-4 shadow ${props.class}`}
+      class={`bg-fill2 border p-4 ${props.class}`}
     >
       {props.children}
     </div>
