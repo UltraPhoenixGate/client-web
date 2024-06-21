@@ -17,7 +17,7 @@ export function Button(props: ButtonProps) {
 
   const baseClasses = 'flex items-center outline-none transition-colors'
   const typeClasses = {
-    primary: 'bg-zinc-900 text-white hover:bg-gray-800 active:bg-gray-900',
+    primary: 'bg-gray-900 text-white hover:bg-gray-700 active:bg-gray-900',
     secondary: 'bg-gray-200 text-black hover:bg-gray-300 active:bg-gray-400',
     danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800',
   }

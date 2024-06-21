@@ -20,7 +20,7 @@ export function Header() {
                 'bg-warning': status() === 'connecting',
                 'bg-danger': status() === 'disconnected',
               }}
-              class="h-2 w-2 rounded-full"
+              class="h-2 w-2"
             >
             </div>
             <Switch>

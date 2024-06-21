@@ -30,7 +30,7 @@ const ModalProvider: ParentComponent = (props) => {
 
   const errorModal = (message: string) => {
     openModal({
-      title: '错误',
+      title: '出错了',
       content: () => message,
     })
   }
