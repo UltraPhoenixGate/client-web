@@ -13,14 +13,14 @@ export function Header() {
       <div data-tauri-drag-region class="h-12 centerRow justify-between border-b px-6">
         <h1 class="text-base text-text1 font-bold">Ultra Phoenix</h1>
         <div>
-          <div class="centerRow gap-2 text-text2">
+          <div class="centerRow text-text2">
             <div
               classList={{
                 'bg-success': status() === 'connected',
                 'bg-warning': status() === 'connecting',
                 'bg-danger': status() === 'disconnected',
               }}
-              class="h-2 w-2"
+              class="mr-2 h-2 w-2"
             >
             </div>
             <Switch>

@@ -162,7 +162,7 @@ function CameraPlayer(props: {
       flvPlayer.play()
       flvPlayer.on('error', (err: any) => {
         console.error(err)
-        throw new Error(`播放器错误：${err.message}`)
+        throw new Error(`播放器错误：${err}`)
       })
     }
 

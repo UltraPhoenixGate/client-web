@@ -39,7 +39,7 @@ export function Menu() {
   const location = useLocation()
   return (
     <div class="h-full w-52 shrink-0 border-r bg-fill2 p-4">
-      <ul class="col gap-3">
+      <ul class="col children:mt-3">
         <For each={menus}>
           {menu => (
             <MenuItem

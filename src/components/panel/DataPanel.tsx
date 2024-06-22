@@ -97,7 +97,7 @@ function DataPanelLine(props: {
       type: 'line',
       data: chartData(),
       options: {
-        responsive: true,
+        responsive: false,
         animation: false,
       },
     })
@@ -110,7 +110,7 @@ function DataPanelLine(props: {
 
   return (
     <div class="bg-gray-100 p-4">
-      <canvas ref={chart} width="400" height="200"></canvas>
+      <canvas ref={chart} class="h-200px w-full"></canvas>
     </div>
   )
 }
@@ -142,7 +142,7 @@ function DataPanelBar(props: {
       type: 'bar',
       data: chartData(),
       options: {
-        responsive: true,
+        responsive: false,
         animation: false,
       },
     })
@@ -155,7 +155,7 @@ function DataPanelBar(props: {
 
   return (
     <div class="bg-gray-100 p-4">
-      <canvas ref={chart} width="400" height="200"></canvas>
+      <canvas ref={chart} class="h-200px w-full"></canvas>
     </div>
   )
 }

@@ -1,16 +1,21 @@
 import { defineConfig } from 'vite'
 import solid from 'vite-plugin-solid'
 import UnoCss from 'unocss/vite'
+import legacy from '@vitejs/plugin-legacy'
 
 // https://vitejs.dev/config/
+// @ts-expect-error tauri is not defined in the browser
 export default defineConfig(async () => ({
   resolve: {
     alias: {
       '@': '/src',
     },
   },
-  plugins: [solid(), UnoCss()],
-
+  plugins: [
+    solid(),
+    UnoCss(),
+    legacy(),
+  ],
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent vite from obscuring rust errors

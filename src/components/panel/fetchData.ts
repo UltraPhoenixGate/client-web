@@ -1,6 +1,6 @@
 import type { DataSource } from './types'
 
-const isDev = import.meta.env.MODE === 'development'
+const isDev = true
 
 export function fetchDataByDataSource(source: DataSource): Promise<MetricsResultItem[]> {
   // 1. 构造 MetricsQL
