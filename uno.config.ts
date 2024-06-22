@@ -52,6 +52,7 @@ export default defineConfig({
     centerRow: 'row items-center',
     centerCol: 'col items-center',
     title: 'text-xl text-text1 font-bold',
+    desc: 'text-sm text-gray-500',
     textVCenter: 'children:inline-block children:align-middle',
     textVCenterFlex: 'flex items-center',
   },

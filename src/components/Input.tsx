@@ -11,7 +11,7 @@ interface InputProps {
 }
 
 export function Input(props: InputProps) {
-  const baseClasses = 'border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 sm:text-sm focus:outline-none focus:ring-indigo-500'
+  const baseClasses = 'flex-1 border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 sm:text-sm focus:outline-none focus:ring-indigo-500'
   const [local, others] = splitProps(props, ['type', 'value', 'placeholder', 'class', 'onInput'])
   const classes = `${baseClasses} ${props.class || ''}`
   return (

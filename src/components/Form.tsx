@@ -3,6 +3,7 @@ import type { JSX } from 'solid-js'
 
 interface FormProps {
   children: JSX.Element | JSX.Element[]
+  class?: string
   onSubmit?: (event: Event) => void
   labelWidth?: string
   labelAlign?: 'left' | 'top'
@@ -19,7 +20,7 @@ const FormContext = createContext<FormContextProps>({})
 export function Form(props: FormProps) {
   return (
     <FormContext.Provider value={{ labelWidth: props.labelWidth, labelAlign: props.labelAlign }}>
-      <form ref={props.ref} class="space-y-2" onSubmit={props.onSubmit}>
+      <form ref={props.ref} class={`${props.class} space-y-2`} onSubmit={props.onSubmit}>
         {props.children}
       </form>
     </FormContext.Provider>
@@ -49,7 +50,7 @@ export function FormItem(props: FormItemProps) {
     >
       <label
         style={{ width: labelWidth }}
-        class="mr-3 text-sm text-gray-700 font-medium"
+        class="mb-1 mr-3 text-sm text-gray-700 font-medium"
       >
         {props.label}
       </label>

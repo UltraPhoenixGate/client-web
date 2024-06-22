@@ -27,7 +27,7 @@ function Modal(props: ModalProps) {
               <i class="i-fluent:dismiss-16-regular" />
             </Button>
           </div>
-          <div class="mt-4">{props.content}</div>
+          <div class="mt-2">{props.content}</div>
         </div>
       </div>
     </Show>
