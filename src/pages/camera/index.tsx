@@ -110,19 +110,19 @@ function CameraItem(props: {
 
   return (
     <div class="relative w-full pt-60%">
-      <div class="absolute inset-0">
-        <div class="bg-gray-200 p-2">
+      <div class="absolute inset-0 col border">
+        <div class="border-b bg-gray-200 p-2">
           <h3 class="text-base text-black font-semibold">
             {props.camera.name}
           </h3>
         </div>
         <div
           onClick={() => openCamera(props.camera)}
-          class="h-full w-full"
+          class="w-full flex-1"
         >
           {loading()
             ? (
-              <div class="h-full flex items-center justify-center bg-gray-300">
+              <div class="h-full flex items-center justify-center bg-fill2">
                 <i class="i-svg-spinners:bars-scale-fade text-gray-700" />
               </div>
               )

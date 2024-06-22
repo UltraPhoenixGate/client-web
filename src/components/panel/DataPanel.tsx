@@ -2,6 +2,7 @@ import { Match, Show, Switch, createEffect, createSignal, onMount } from 'solid-
 import { Chart } from 'chart.js'
 import 'chart.js/auto'
 import dayjs from 'dayjs'
+import { Card } from '../Card'
 import type { SensorDataItem } from './fetchData'
 import { fetchDataByDataSource, praseMetricsResult } from './fetchData'
 import type { DataPanelConfig, RenderConfig } from './types'
@@ -54,7 +55,7 @@ function DataPanelCard(props: {
 }) {
   const formatter = props.render.format ? new Intl.NumberFormat('zh-CN', props.render.format) : defaultFormatter
   return (
-    <div class="bg-gray-100 p-4">
+    <Card>
       <h2 class="text-xl font-bold">{props.render.title}</h2>
       <p class="text-gray-500">{props.render.description}</p>
       <Show when={props.data.length === 0}>
@@ -66,7 +67,7 @@ function DataPanelCard(props: {
           {props.render.unit}
         </div>
       </Show>
-    </div>
+    </Card>
   )
 }
 
@@ -109,9 +110,9 @@ function DataPanelLine(props: {
   })
 
   return (
-    <div class="bg-gray-100 p-4">
+    <Card>
       <canvas ref={chart} class="h-200px w-full"></canvas>
-    </div>
+    </Card>
   )
 }
 
@@ -154,8 +155,8 @@ function DataPanelBar(props: {
   })
 
   return (
-    <div class="bg-gray-100 p-4">
+    <Card>
       <canvas ref={chart} class="h-200px w-full"></canvas>
-    </div>
+    </Card>
   )
 }
