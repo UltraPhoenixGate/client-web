@@ -1,3 +1,9 @@
+import { SystemInfo } from './components/SystemInfo'
+
 export default function Home() {
-  return <div class="">Setting</div>
+  return (
+    <div class="p-4">
+      <SystemInfo />
+    </div>
+  )
 }
