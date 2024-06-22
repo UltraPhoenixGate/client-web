@@ -5,7 +5,7 @@ import Button from '@/components/Button'
 import { Form, FormItem } from '@/components/Form'
 import { Input } from '@/components/Input'
 import { client } from '@/context/ClientContext'
-import { useModal } from '@/utils/modalManager'
+import { useModal, useModalInner } from '@/utils/modalManager'
 
 export function ConnectNew() {
   const [status, setStatus] = createSignal<'ChooseCamera' | 'SearchCamera' | 'AddCamera'>('ChooseCamera')
@@ -102,6 +102,10 @@ function AddCamera() {
     openModal,
     errorModal,
   } = useModal()
+  const {
+    closeSelfModal,
+  } = useModalInner()
+
   const [params, setParams] = createStore<AddCameraParams>({
     name: '',
     description: '',
@@ -150,6 +154,7 @@ function AddCamera() {
         title: '添加成功',
         content: '添加成功',
       })
+      closeSelfModal()
     }).catch((e) => {
       errorModal(e.message)
     }).finally(() => {

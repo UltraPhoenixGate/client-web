@@ -24,19 +24,31 @@ export default function Home() {
     <div class="p-4">
       <div class="centerRow justify-between">
         <h1 class="title">已接入设备</h1>
-        <div>
+        <div class="row">
           <Button type="primary" icon="i-fluent:add-square-16-regular" onClick={connectNewClient}>连接新设备</Button>
+          <Button
+            class="ml-2"
+            type="secondary"
+            icon={`i-fluent:arrow-sync-20-regular ${
+              loading() ? 'animate-spin' : ''
+            }`}
+            onClick={refresh}
+          >
+            刷新
+          </Button>
         </div>
       </div>
       <div class="grid grid-cols-2 mt-3 gap-3 lg:grid-cols-3 xl:grid-cols-4">
         <Show when={loading()}>
-          <div class="col-span-3 text-center">加载中...</div>
+          <div class="col-span-2 text-center lg:col-span-3 xl:col-span-4">加载中...</div>
         </Show>
-        <For each={clients() || []}>
-          {client => (
-            <ClientItem client={client} onRemove={refresh} />
-          )}
-        </For>
+        <Show when={!loading()}>
+          <For each={clients() || []}>
+            {client => (
+              <ClientItem client={client} onRemove={refresh} />
+            )}
+          </For>
+        </Show>
       </div>
     </div>
   )

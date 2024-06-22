@@ -1,6 +1,8 @@
 import { batch, createEffect, createSignal } from 'solid-js'
 
-export function useRequest<Parma, Res>(fn: (p: Parma) => Promise<Res>, initialParams: Parma) {
+export function useRequest<Parma, Res>(fn: (p: Parma) => Promise<Res>, initialParams: Parma, config?: {
+  onError?: (err: Error) => void
+}) {
   const [data, setData] = createSignal<Res>()
   const [loading, setLoading] = createSignal(true)
   const [error, setError] = createSignal<Error>()
@@ -17,7 +19,7 @@ export function useRequest<Parma, Res>(fn: (p: Parma) => Promise<Res>, initialPa
       batch(() => {
         setError(err)
         setLoading(false)
-        console.log(err)
+        config?.onError?.(err)
       })
     })
   }

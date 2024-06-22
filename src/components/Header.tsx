@@ -11,7 +11,7 @@ export function Header() {
         <WindowDecoration />
       </Show>
       <div data-tauri-drag-region class="h-12 centerRow justify-between border-b px-6">
-        <h1 class="text-base text-text1 font-bold">Ultra Phoenix</h1>
+        <h1 class="text-base text-text1 font-bold">Ultra Phoenix 工业网关</h1>
         <div>
           <div class="centerRow text-text2">
             <div

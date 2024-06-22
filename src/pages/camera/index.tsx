@@ -5,6 +5,7 @@ import { useModal } from '@/utils/modalManager'
 import { Button } from '@/components/Button'
 import { client, useClient } from '@/context/ClientContext'
 import { config } from '@/store'
+import { useRequest } from '@/hooks/useRequest'
 
 export default function Home() {
   return (
@@ -25,36 +26,32 @@ function CameraList() {
       content: ConnectNew,
     })
   }
-  const [list, setList] = createSignal<Camera[]>([])
-  const [loading, setLoading] = createSignal(true)
-  function refresh() {
-    setLoading(true)
-    client.camera.getCameras().then((res) => {
-      setList(res.cameras)
-    }).catch((err) => {
+  const { data: list, loading, refresh } = useRequest(client.camera.getCameras, {}, {
+    onError(err) {
       errorModal(err.message)
-    }).finally(() => {
-      setLoading(false)
-    })
-  }
-  onMount(() => {
-    refresh()
+    },
   })
-  // client.camera.getCameras().then((res) => {
-  //   console.log(res)
-  // })
-
   return (
     <div>
       <div class="centerRow justify-between">
         <h1 class="title">监控列表</h1>
-        <div>
+        <div class="row">
           <Button
             type="primary"
             onClick={connectNewCamera}
             icon="i-fluent:add-square-24-regular mr-2"
           >
             连接新设备
+          </Button>
+          <Button
+            class="ml-2"
+            type="secondary"
+            icon={`i-fluent:arrow-sync-20-regular ${
+              loading() ? 'animate-spin' : ''
+            }`}
+            onClick={refresh}
+          >
+            刷新
           </Button>
         </div>
       </div>
@@ -66,11 +63,13 @@ function CameraList() {
         <Show when={loading()}>
           <div class="col-span-3 text-center">加载中...</div>
         </Show>
-        <For each={list() || []}>
-          {camera => (
-            <CameraItem camera={camera} />
-          )}
-        </For>
+        <Show when={!loading()}>
+          <For each={list()?.cameras || []}>
+            {camera => (
+              <CameraItem camera={camera} />
+            )}
+          </For>
+        </Show>
       </div>
     </div>
   )
