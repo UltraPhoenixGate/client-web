@@ -2,8 +2,9 @@ import type { JSX, ParentComponent } from 'solid-js'
 import { For, createContext, createSignal, useContext } from 'solid-js'
 import Modal from '@/components/Modal'
 import type { ModalProps } from '@/components/Modal'
+import Button from '@/components/Button'
 
-interface ShowModalOptions {
+export interface ShowModalOptions {
   id?: string
   customModal?: (props: ModalProps) => JSX.Element
   content: (() => JSX.Element) | JSX.Element
@@ -11,10 +12,36 @@ interface ShowModalOptions {
   onClose?: () => void
 }
 
+export interface ConfirmModalOptions {
+  title: string
+  content: (() => JSX.Element) | JSX.Element
+  onOk: () => void | Promise<void>
+  onCancel?: () => void
+}
+
+interface ModalInnerContextType {
+  id: string
+  closeSelfModal: () => void
+}
+const ModalInnerContext = createContext<ModalInnerContextType>()
+
+function ModalInnerProvider(props: {
+  id: string
+  onClose: () => void
+  children: JSX.Element
+}) {
+  return (
+    <ModalInnerContext.Provider value={{ id: props.id, closeSelfModal: props.onClose }}>
+      {props.children}
+    </ModalInnerContext.Provider>
+  )
+}
+
 interface ModalContextType {
   openModal: (options: ShowModalOptions) => string // 返回 modal 的 id
   closeModal: (id: string) => void
   errorModal: (message: string) => void
+  confirmModal: (params: ConfirmModalOptions) => void
 }
 
 const ModalContext = createContext<ModalContextType>()
@@ -41,18 +68,67 @@ const ModalProvider: ParentComponent = (props) => {
     modal?.onClose?.()
   }
 
+  const confirmModal = (params: ConfirmModalOptions) => {
+    const id = openModal({
+      title: params.title,
+      content: () => {
+        const [isConfirming, setIsConfirming] = createSignal(false)
+        return (
+          <div>
+            {typeof params.content === 'function' ? params.content() : params.content}
+            <div class="mt-4 centerRow justify-end">
+              <Button
+                type="primary"
+                class="mr-2"
+                loading={isConfirming()}
+                onClick={() => {
+                  setIsConfirming(true)
+                  const result = params.onOk()
+                  if (result instanceof Promise) {
+                    result.finally(() => {
+                      setIsConfirming(false)
+                      closeModal(id)
+                    })
+                  }
+                  else {
+                    setIsConfirming(false)
+                    closeModal(id)
+                  }
+                }}
+              >
+                确定
+              </Button>
+              <Button
+                onClick={() => {
+                  params.onCancel?.()
+                  closeModal(id)
+                }}
+              >
+                取消
+              </Button>
+            </div>
+          </div>
+        )
+      },
+
+    })
+    return id
+  }
+
   return (
-    <ModalContext.Provider value={{ openModal, closeModal, errorModal }}>
+    <ModalContext.Provider value={{ openModal, closeModal, errorModal, confirmModal }}>
       {props.children}
       <For each={modals()}>
         {(modalProps) => {
           const ModalImpl = modalProps.customModal || Modal
           return (
-            <ModalImpl
-              {...modalProps}
-              content={typeof modalProps.content === 'function' ? modalProps.content() : modalProps.content}
-              onClose={() => closeModal(modalProps.id!)}
-            />
+            <ModalInnerProvider id={modalProps.id!} onClose={() => closeModal(modalProps.id!)}>
+              <ModalImpl
+                {...modalProps}
+                content={typeof modalProps.content === 'function' ? modalProps.content() : modalProps.content}
+                onClose={() => closeModal(modalProps.id!)}
+              />
+            </ModalInnerProvider>
           )
         }}
       </For>
@@ -64,6 +140,14 @@ export function useModal() {
   const context = useContext(ModalContext)
   if (!context)
     throw new Error('useModal must be used within a ModalProvider')
+
+  return context
+}
+
+export function useModalInner() {
+  const context = useContext(ModalInnerContext)
+  if (!context)
+    throw new Error('useModalInner must be used within a ModalInnerProvider')
 
   return context
 }

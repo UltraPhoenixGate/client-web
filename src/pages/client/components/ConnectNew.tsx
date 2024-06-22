@@ -7,7 +7,7 @@ import { Input } from '@/components/Input'
 import { Card } from '@/components/Card'
 import { useClient } from '@/context/ClientContext'
 import Radio from '@/components/Radio'
-import { useModal } from '@/utils/modalManager'
+import { useModal, useModalInner } from '@/utils/modalManager'
 
 export function ConnectNew() {
   const [status, setStatus] = createSignal<'AddManual' | 'SearchLocal' | 'ChooseOption'>('ChooseOption')
@@ -64,6 +64,8 @@ function AddManual() {
     openModal,
   } = useModal()
 
+  const { closeSelfModal } = useModalInner()
+
   const [basicInfo, setBasicInfo] = createStore({
     name: '',
     description: '',
@@ -95,6 +97,7 @@ function AddManual() {
       errorModal(err.message)
     }).finally(() => {
       setIsAdding(false)
+      closeSelfModal()
     })
   }
   const [isTesting, setIsTesting] = createSignal(false)
