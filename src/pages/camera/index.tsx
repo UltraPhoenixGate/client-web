@@ -55,7 +55,7 @@ function CameraList() {
           </Button>
         </div>
       </div>
-      <p class="desc mt-1">
+      <p class="mt-1 desc">
         点击画面可查看实时画面
       </p>
 
