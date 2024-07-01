@@ -1,4 +1,4 @@
-import { For, createEffect, createSignal } from 'solid-js'
+import { For, Show, createEffect, createSignal } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { Form, FormItem } from '../Form'
 import { Input } from '../Input'
@@ -6,9 +6,10 @@ import Button from '../Button'
 import { Select } from '../Select'
 import { type DataPanelConfig, type DataSource, type RenderConfig, timeRangeLabels, timeRanges } from './types'
 import { fetchDataByDataSources } from './fetchData'
-import { useModal } from '@/utils/modalManager'
+import { useModal, useModalInner } from '@/utils/modalManager'
 import { useRequest } from '@/hooks/useRequest'
 import { client } from '@/context/ClientContext'
+import { usePanel } from '@/context/PanelContext'
 
 interface DataPanelEditorProps {
   initialConfig: DataPanelConfig
@@ -20,7 +21,14 @@ export function DataPanelEditor(props: DataPanelEditorProps) {
   let form!: HTMLFormElement
   const {
     errorModal,
+    confirmModal,
   } = useModal()
+
+  const {
+    closeSelfModal,
+  } = useModalInner()
+
+  const { hasPanel, removePanel } = usePanel()
 
   const handleSave = () => {
     if (!form.checkValidity()) {
@@ -41,6 +49,17 @@ export function DataPanelEditor(props: DataPanelEditorProps) {
 
   const handleRefreshIntervalChange = (value: number) => {
     setConfig(prev => ({ ...prev, refreshInterval: value }))
+  }
+
+  function handelRemovePanel() {
+    confirmModal({
+      title: '删除面板',
+      content: '确定删除该面板吗？',
+      onOk: () => {
+        removePanel(config().uuid)
+        closeSelfModal()
+      },
+    })
   }
 
   return (
@@ -122,6 +141,9 @@ export function DataPanelEditor(props: DataPanelEditorProps) {
 
       <div class="mt-2 row">
         <Button class="mr-2" onClick={handleSave} type="primary">保存</Button>
+        <Show when={hasPanel(config().uuid)}>
+          <Button type="danger" onClick={handelRemovePanel}>删除</Button>
+        </Show>
       </div>
     </div>
   )

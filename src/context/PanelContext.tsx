@@ -21,12 +21,16 @@ function usePanelState() {
     setPanels(panels => panels.map(panel => panel.uuid === uuid ? newPanel : panel))
   }
 
+  function hasPanel(uuid: string) {
+    return panels.some(panel => panel.uuid === uuid)
+  }
+
   // Save panels to localStorage
   createEffect(() => {
     localStorage.setItem('panels', JSON.stringify(panels))
   })
 
-  return { panels, addPanel, removePanel, updatePanel }
+  return { panels, addPanel, removePanel, updatePanel, hasPanel }
 }
 
 const PanelContext = createContext<ReturnType<typeof usePanelState>>()

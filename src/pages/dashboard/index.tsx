@@ -2,16 +2,15 @@ import { v7 as uuid } from 'uuid'
 import Button from '@/components/Button'
 import { DataPanel } from '@/components/panel/DataPanel'
 import type { DataPanelConfig } from '@/components/panel/types'
-import { PanelProvider, usePanel } from '@/context/PanelContext'
+import { usePanel } from '@/context/PanelContext'
 import { useModal } from '@/utils/modalManager'
 import { DataPanelEditor } from '@/components/panel/PanelEditor'
 
 export default function Home() {
   return (
     <div class="p-4">
-      <PanelProvider>
-        <DataList />
-      </PanelProvider>
+
+      <DataList />
     </div>
   )
 }
