@@ -29,7 +29,9 @@ export function Form(props: FormProps) {
 
 interface FormItemProps {
   label: string
+  description?: string
   children: JSX.Element
+  class?: string
   labelWidth?: string
   labelAlign?: 'left' | 'top'
 }
@@ -42,11 +44,11 @@ export function FormItem(props: FormItemProps) {
 
   return (
     <div
-      classList={{
-        'centerRow': labelAlign === 'left',
-        'flex-col': labelAlign === 'top',
-      }}
-      class="flex"
+      class={[
+        'flex',
+        labelAlign === 'left' ? 'centerRow' : 'flex-col',
+        props.class,
+      ].join(' ')}
     >
       <label
         style={{ width: labelWidth }}
@@ -54,7 +56,12 @@ export function FormItem(props: FormItemProps) {
       >
         {props.label}
       </label>
-      {props.children}
+      <div class="col flex-1">
+        {props.children}
+        {props.description && (
+          <p class="mt-1 text-xs text-gray-500">{props.description}</p>
+        )}
+      </div>
     </div>
   )
 }

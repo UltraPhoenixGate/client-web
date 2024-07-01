@@ -1,11 +1,14 @@
+import type { ParentProps } from 'solid-js'
 import { Match, Show, Switch, createEffect, createSignal, onMount } from 'solid-js'
 import { Chart, Colors, Title } from 'chart.js'
 import 'chart.js/auto'
 import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm'
 import type { MetricsResultItem } from 'ultraphx-js-sdk'
-import { Card } from '../Card'
-import { fetchDataByDataSource } from './fetchData'
+import { fetchDataByDataSources } from './fetchData'
 import type { DataPanelConfig, RenderConfig } from './types'
+import { DataPanelEditor } from './PanelEditor'
+import { usePanel } from '@/context/PanelContext'
+import { useModal } from '@/utils/modalManager'
 
 Chart.register(Colors, Title)
 
@@ -32,13 +35,13 @@ export function DataPanel(props: DataPanelProps) {
   const [data, setData] = createSignal<MetricsResultItem[]>([])
 
   createEffect(() => {
-    fetchDataByDataSource(props.config.source).then((data) => {
+    fetchDataByDataSources(props.config.source).then((data) => {
       setData(data)
     })
 
     if (props.config.refreshInterval) {
       const timer = setInterval(() => {
-        fetchDataByDataSource(props.config.source).then((data) => {
+        fetchDataByDataSources(props.config.source).then((data) => {
           setData(data)
         })
       }, props.config.refreshInterval * 1000)
@@ -50,7 +53,7 @@ export function DataPanel(props: DataPanelProps) {
   return (
     <Switch>
       <Match when={props.config.render.type === 'card'}>
-        <DataPanelCard data={data()} render={props.config.render} />
+        <DataPanelCard data={data()} render={props.config.render} config={props.config} />
       </Match>
       <Match when={props.config.render.type === 'line'}>
         <DataPanelLine data={data()} config={props.config} />
@@ -64,14 +67,55 @@ export function DataPanel(props: DataPanelProps) {
 
 const defaultFormatter = new Intl.NumberFormat('zh-CN')
 
+function BasicCard(props: ParentProps<{
+  class?: string
+  config: DataPanelConfig
+}>) {
+  const { updatePanel } = usePanel()
+  const { openModal, closeModal } = useModal()
+
+  function handelEditPanel(panel: DataPanelConfig) {
+    const modalId = openModal({
+      title: '编辑面板',
+      content: () => {
+        return (
+          <DataPanelEditor
+            initialConfig={panel}
+            onSave={(newPanel) => {
+              updatePanel(panel.uuid, newPanel)
+              closeModal(modalId)
+            }}
+          />
+        )
+      },
+    })
+  }
+
+  return (
+    <div
+      class={`group bg-fill2 border relative p-4 ${props.class}`}
+    >
+      {/* setting */}
+      <div
+        onclick={() => handelEditPanel(props.config!)}
+        class="absolute right-2 top-2 hidden text-24px text-text2 group-hover:block"
+      >
+        <i class="i-fluent:settings-24-regular cursor-pointer hover:text-text1"></i>
+      </div>
+      {props.children}
+    </div>
+  )
+}
+
 function DataPanelCard(props: {
   data: MetricsResultItem[]
   render: RenderConfig
+  config: DataPanelConfig
 }) {
   const formatter = props.render.format ? new Intl.NumberFormat('zh-CN', props.render.format) : defaultFormatter
   const colSize = gridColSizes[props.render.size || 3]
   return (
-    <Card class={`${colSize}`}>
+    <BasicCard class={`${colSize}`} config={props.config}>
       <h2 class="text-xl font-bold">{props.render.title}</h2>
       <p class="text-gray-500">{props.render.description}</p>
       <Show when={props.data.length === 0}>
@@ -83,7 +127,7 @@ function DataPanelCard(props: {
           {props.render.unit}
         </div>
       </Show>
-    </Card>
+    </BasicCard>
   )
 }
 
@@ -158,9 +202,9 @@ function DataPanelLine(props: {
   })
 
   return (
-    <Card class={`${colSize}`}>
+    <BasicCard config={props.config} class={`${colSize}`}>
       <canvas ref={chart} class="h-200px w-full"></canvas>
-    </Card>
+    </BasicCard>
   )
 }
 function DataPanelBar(props: {
@@ -209,8 +253,8 @@ function DataPanelBar(props: {
   })
 
   return (
-    <Card>
+    <BasicCard config={props.config}>
       <canvas ref={chart} class="h-200px w-full"></canvas>
-    </Card>
+    </BasicCard>
   )
 }

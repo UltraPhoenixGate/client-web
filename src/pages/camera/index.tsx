@@ -144,6 +144,8 @@ function CameraPlayer(props: {
   async function getFlvStreamUrl() {
     const res = await client.camera.openStream({
       id: props.id,
+      width: 480,
+      height: 270,
     })
     return `${res.url}&token=${config.token}`
   }

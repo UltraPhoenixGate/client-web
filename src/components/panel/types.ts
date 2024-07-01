@@ -1,11 +1,12 @@
 export interface DataPanelConfig {
-  source: DataSource[] | DataSource
+  uuid: string
+  source: DataSource[]
   render: RenderConfig
   refreshInterval?: number // 数据刷新间隔（秒）
 }
 
 export interface DataSource {
-  type: 'byDevice' | 'byLabels'
+  type: 'default'
   labels: Record<string, string>
   timeRange: TimeRange
   maxDataPoints?: number
@@ -36,6 +37,28 @@ export const timeRanges = {
   lastMonth: () => [Date.now() - 30 * 24 * 60 * 60 * 1000, Date.now()],
   thisYear: () => [new Date().setMonth(0, 1), Date.now()],
   lastYear: () => [Date.now() - 365 * 24 * 60 * 60 * 1000, Date.now()],
+}
+
+export const timeRangeLabels: Record<keyof typeof timeRanges, string> = {
+  last5min: '最近5分钟',
+  last15min: '最近15分钟',
+  last30min: '最近30分钟',
+  last1hour: '最近1小时',
+  last3hours: '最近3小时',
+  last6hours: '最近6小时',
+  last12hours: '最近12小时',
+  today: '今天',
+  last24hours: '最近24小时',
+  yesterday: '昨天',
+  last3days: '最近3天',
+  last5days: '最近5天',
+  last7days: '最近7天',
+  thisWeek: '本周',
+  lastWeek: '上周',
+  thisMonth: '本月',
+  lastMonth: '上月',
+  thisYear: '今年',
+  lastYear: '去年',
 }
 
 export interface RenderConfig {

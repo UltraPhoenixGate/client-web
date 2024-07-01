@@ -2,8 +2,7 @@ import type { MetricsResultItem, QueryRangeParams } from 'ultraphx-js-sdk'
 import { type DataSource, timeRanges } from './types'
 import { client } from '@/context/ClientContext'
 
-export async function fetchDataByDataSource(source: DataSource | DataSource[]): Promise<MetricsResultItem[]> {
-  const sources = Array.isArray(source) ? source : [source]
+export async function fetchDataByDataSources(sources: DataSource[]): Promise<MetricsResultItem[]> {
   const data = await Promise.all(sources.map((source_1) => {
     const metricsQl = buildMetricsQL(source_1)
     return fetchMetricsData(metricsQl)
@@ -18,8 +17,12 @@ export interface SensorDataItem {
 
 function buildMetricsQL(source: DataSource): QueryRangeParams | string {
   let promQL = `{`
-  for (const [key, value] of Object.entries(source.labels))
+  for (const [key, value] of Object.entries(source.labels)) {
+    // 忽略空值
+    if (!value)
+      continue
     promQL += `${key}="${value}",`
+  }
   // remove the last comma
   promQL = promQL.slice(0, -1)
   promQL += `}`
