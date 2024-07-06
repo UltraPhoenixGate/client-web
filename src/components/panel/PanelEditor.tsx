@@ -247,7 +247,7 @@ function DataSourceForm(props: {
     errorModal,
   } = useModal()
   const [source, setSource] = createStore({ ...props.source })
-  const { data: sensors } = useRequest(client.client.getConnectedClients, {}, {
+  const { data: sensors } = useRequest(client().client.getConnectedClients, {}, {
     onError(err) {
       errorModal(err.message)
     },

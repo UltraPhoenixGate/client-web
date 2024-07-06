@@ -3,9 +3,9 @@ import type { Camera } from 'ultraphx-js-sdk'
 import { ConnectNew } from './components/ConnectNew'
 import { useModal } from '@/utils/modalManager'
 import { Button } from '@/components/Button'
-import { client, useClient } from '@/context/ClientContext'
-import { config } from '@/store'
+import { useClient } from '@/context/ClientContext'
 import { useRequest } from '@/hooks/useRequest'
+import { useConfig } from '@/context/ConfigContext'
 
 export default function Home() {
   return (
@@ -26,7 +26,9 @@ function CameraList() {
       content: ConnectNew,
     })
   }
-  const { data: list, loading, refresh } = useRequest(client.camera.getCameras, {}, {
+  const { client } = useClient()
+
+  const { data: list, loading, refresh } = useRequest(client().camera.getCameras, {}, {
     onError(err) {
       errorModal(err.message)
     },
@@ -80,10 +82,11 @@ function CameraItem(props: {
 }) {
   const [currentFrame, setCurrentFrame] = createSignal<string>('')
   const [loading, setLoading] = createSignal(true)
+  const { client } = useClient()
 
   function getFrame() {
     setLoading(true)
-    client.camera.getCurrentFrame(props.camera.streamUrl).then((res) => {
+    client().camera.getCurrentFrame(props.camera.streamUrl).then((res) => {
       setCurrentFrame(res.image)
     }).finally(() => {
       setLoading(false)
@@ -139,10 +142,11 @@ function CameraPlayer(props: {
   id: string
 }) {
   let video!: HTMLVideoElement
+  const { config } = useConfig()
   const { client } = useClient()
   const { errorModal } = useModal()
   async function getFlvStreamUrl() {
-    const res = await client.camera.openStream({
+    const res = await client().camera.openStream({
       id: props.id,
       width: 480,
       height: 270,

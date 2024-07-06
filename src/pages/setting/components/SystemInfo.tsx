@@ -9,7 +9,7 @@ export function SystemInfo() {
   const { errorModal } = useModal()
   const {
     data: systemInfo,
-  } = useRequest(client.system.getSystemInfo, {}, {
+  } = useRequest(client().system.getSystemInfo, {}, {
     onError(err) {
       errorModal(err.message)
     },

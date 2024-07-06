@@ -12,7 +12,7 @@ export default function Home() {
 
 function AlertRecords() {
   const { client } = useClient()
-  const { data: records, loading } = useRequest(client.alert.getAlertRecords, {})
+  const { data: records, loading } = useRequest(client().alert.getAlertRecords, {})
 
   return (
     <div>

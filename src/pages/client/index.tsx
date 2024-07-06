@@ -19,7 +19,7 @@ export default function Home() {
   }
 
   const { client } = useClient()
-  const { data: clients, loading, refresh } = useRequest(client.client.getConnectedClients, {})
+  const { data: clients, loading, refresh } = useRequest(client().client.getConnectedClients, {})
   return (
     <div class="p-4">
       <div class="centerRow justify-between">
@@ -76,7 +76,7 @@ function ClientItem(props: {
       },
       onOk: async () => {
         try {
-          await client.client.removeClient(props.client.id)
+          await client().client.removeClient(props.client.id)
           props.onRemove?.()
         }
         catch (error: any) {

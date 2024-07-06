@@ -87,7 +87,7 @@ function AddManual() {
       return
     }
     setIsAdding(true)
-    client.client.addActiveSensor({
+    client().client.addActiveSensor({
       ...basicInfo,
       collectionInfo: connectionInfo,
     }).then(() => {

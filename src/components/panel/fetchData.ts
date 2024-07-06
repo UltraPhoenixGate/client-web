@@ -50,11 +50,11 @@ function buildMetricsQL(source: DataSource): QueryRangeParams | string {
 
 async function fetchMetricsData(query: string | QueryRangeParams): Promise<MetricsResultItem[]> {
   if (typeof query === 'string') {
-    const data = await client.data.query(query)
+    const data = await client().data.query(query)
     return data.result
   }
   else {
-    const data = await client.data.queryRange(query)
+    const data = await client().data.queryRange(query)
     return data.result
   }
 }

@@ -14,7 +14,7 @@ export default defineConfig(async () => ({
   plugins: [
     solid(),
     UnoCss(),
-    legacy(),
+    // legacy(),
   ],
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

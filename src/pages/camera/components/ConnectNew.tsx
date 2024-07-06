@@ -4,8 +4,8 @@ import { createStore } from 'solid-js/store'
 import Button from '@/components/Button'
 import { Form, FormItem } from '@/components/Form'
 import { Input } from '@/components/Input'
-import { client } from '@/context/ClientContext'
 import { useModal, useModalInner } from '@/utils/modalManager'
+import { useClient } from '@/context/ClientContext'
 
 export function ConnectNew() {
   const [status, setStatus] = createSignal<'ChooseCamera' | 'SearchCamera' | 'AddCamera'>('ChooseCamera')
@@ -56,10 +56,11 @@ function ChooseCamera({
 function SearchCamera() {
   const [devices, setDevices] = createSignal<OnvifDevice[]>([])
   const [loading, setLoading] = createSignal(true)
+  const { client } = useClient()
 
   function search() {
     setLoading(true)
-    client.camera.scanOnvifDevices().then((res) => {
+    client().camera.scanOnvifDevices().then((res) => {
       setDevices(res.devices)
     }).catch((err) => {
       console.error(err)
@@ -114,6 +115,7 @@ function AddCamera() {
   })
   const [isTesting, setIsTesting] = createSignal(false)
   const [isAdding, setIsAdding] = createSignal(false)
+  const { client } = useClient()
 
   function runTest() {
     setIsTesting(true)
@@ -126,7 +128,7 @@ function AddCamera() {
       return
     }
 
-    client.camera.getCurrentFrame(params.streamUrl).then((res) => {
+    client().camera.getCurrentFrame(params.streamUrl).then((res) => {
       openModal({
         title: '测试结果',
         content: <img src={res.image} width={500} />,
@@ -149,7 +151,7 @@ function AddCamera() {
       return
     }
 
-    client.camera.addCamera(params).then(() => {
+    client().camera.addCamera(params).then(() => {
       openModal({
         title: '添加成功',
         content: '添加成功',

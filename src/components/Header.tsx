@@ -92,15 +92,15 @@ function ConnectionGate() {
   } = useModal()
 
   function acceptClient(client: Client) {
-    return clientCtx.client.setClientStatus(client.id, 'active')
+    return clientCtx().client.setClientStatus(client.id, 'active')
   }
 
   function rejectClient(client: Client) {
-    return clientCtx.client.setClientStatus(client.id, 'expired')
+    return clientCtx().client.setClientStatus(client.id, 'expired')
   }
 
   async function checkPendingClient() {
-    const pendingClient = await clientCtx.client.getPendingClients()
+    const pendingClient = await clientCtx().client.getPendingClients()
     // debug
     // pendingClient.push({
     //   id: 'test',
