@@ -24,7 +24,7 @@
     "flv.js": "^1.6.2",
     "solid-chartjs": "^1.3.10",
     "solid-js": "^1.8.18",
-    "ultraphx-js-sdk": "^0.1.19",
+    "ultraphx-js-sdk": "^0.1.22",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

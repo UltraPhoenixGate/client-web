@@ -1,10 +1,12 @@
-import { For, Match, Show, Switch, createSignal, onMount } from 'solid-js'
+import { For, Match, Show, Switch, createEffect, createSignal, onMount } from 'solid-js'
 import { appWindow } from '@tauri-apps/api/window'
 import type { Client } from 'ultraphx-js-sdk'
+import { useNavigate } from '@solidjs/router'
 import Button from './Button'
 import { useClient } from '@/context/ClientContext'
 import { isApp } from '@/store'
 import { useModal } from '@/utils/modalManager'
+import { useConfig } from '@/context/ConfigContext'
 
 export function Header() {
   const { status } = useClient()
@@ -221,6 +223,13 @@ function ConnectionGate() {
       await checkPendingClient()
       await new Promise(resolve => setTimeout(resolve, 1000))
     }
+  })
+
+  const { config } = useConfig()
+  const navigate = useNavigate()
+  createEffect(() => {
+    if (!config.token)
+      navigate('/login')
   })
   return null
 }

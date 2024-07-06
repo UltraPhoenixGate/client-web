@@ -114,6 +114,12 @@ function ClientItem(props: {
                   插件
                 </div>
               </Match>
+              <Match when={props.client.type === 'local'}>
+                <div class="textVCenter">
+                  <i class="i-fluent:laptop-24-regular mr-1 text-1.3em" />
+                  本地客户端
+                </div>
+              </Match>
             </Switch>
           </div>
         </div>
@@ -123,6 +129,7 @@ function ClientItem(props: {
             size="small"
             class="mt-2"
             icon="i-fluent:delete-16-regular"
+            disabled={props.client.type === 'local'}
           >
             移除
           </Button>

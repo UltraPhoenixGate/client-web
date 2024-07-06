@@ -12,6 +12,7 @@ const Alert = lazy(() => import('./alert'))
 const Camera = lazy(() => import('./camera'))
 const Setting = lazy(() => import('./setting'))
 const Setup = lazy(() => import('./setup'))
+const Login = lazy(() => import('./login'))
 
 function AppProvider(props: { children: any }) {
   return (
@@ -39,7 +40,9 @@ function App() {
           <Route path="camera" component={Camera} />
           <Route path="setting" component={Setting} />
         </Route>
+        <Route path="/setup" component={() => <Navigate href="/setup/1" />} />
         <Route path="/setup/:step" component={Setup} />
+        <Route path="/login" component={Login} />
       </Router>
     </AppProvider>
   )

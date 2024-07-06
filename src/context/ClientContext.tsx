@@ -4,7 +4,7 @@ import { createSdkClient } from 'ultraphx-js-sdk'
 import { config, useConfig } from './ConfigContext'
 
 export type ClientStatus = 'connected' | 'disconnected' | 'connecting'
-const [client, setClient] = createSignal<ReturnType<typeof createSdkClient>>(
+const [client, _setClient] = createSignal<ReturnType<typeof createSdkClient>>(
   createSdkClient({
     baseUrl: config.backendUrl,
     token: config.token,
@@ -14,13 +14,9 @@ const [client, setClient] = createSignal<ReturnType<typeof createSdkClient>>(
 function useClientState() {
   const { config } = useConfig()
 
-  createEffect(() => config, () => {
-    setClient(
-      createSdkClient({
-        baseUrl: config.backendUrl,
-        token: config.token,
-      }),
-    )
+  createEffect(() => {
+    client().setToken(config.token)
+    client().setBaseUrl(config.backendUrl)
   })
 
   const [status, setStatus] = createSignal<ClientStatus>('connecting')
