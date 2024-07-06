@@ -39,7 +39,7 @@ function App() {
           <Route path="camera" component={Camera} />
           <Route path="setting" component={Setting} />
         </Route>
-        <Route path="/setup" component={Setup} />
+        <Route path="/setup/:step" component={Setup} />
       </Router>
     </AppProvider>
   )

@@ -9,11 +9,12 @@ export interface ButtonProps {
   children: JSX.Element
   icon?: string
   loading?: boolean
+  disabled?: boolean
   onClick?: () => void
 }
 
 export function Button(props: ButtonProps) {
-  const [local, others] = splitProps(props, ['type', 'class', 'children', 'size', 'icon', 'htmlType'])
+  const [local, others] = splitProps(props, ['type', 'class', 'children', 'size', 'icon', 'htmlType', 'disabled'])
 
   const baseClasses = 'flex items-center outline-none transition-colors'
   const typeClasses = {
@@ -26,7 +27,7 @@ export function Button(props: ButtonProps) {
     medium: 'text-base px-3 py-1.5',
     large: 'text-lg px-4 py-2',
   }
-  const disabledClasses = 'disabled:cursor-not-allowed disabled:opacity-50'
+  const disabledClasses = 'disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none'
 
   const classes = `${baseClasses}
   ${typeClasses[local.type || 'secondary'] || ''} 
@@ -39,6 +40,7 @@ export function Button(props: ButtonProps) {
     <button
       class={classes}
       typeof={local.htmlType || 'button'}
+      disabled={local.disabled || props.loading}
       {...others}
     >
       {props.icon && <i class={`text-1.3em mr-2 ${props.icon}`} />}

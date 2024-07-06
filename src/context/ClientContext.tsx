@@ -14,7 +14,7 @@ const [client, setClient] = createSignal<ReturnType<typeof createSdkClient>>(
 function useClientState() {
   const { config } = useConfig()
 
-  createEffect(() => {
+  createEffect(() => config, () => {
     setClient(
       createSdkClient({
         baseUrl: config.backendUrl,
@@ -22,8 +22,6 @@ function useClientState() {
       }),
     )
   })
-
-  console.log(client())
 
   const [status, setStatus] = createSignal<ClientStatus>('connecting')
   client().ws.onConnect(() => setStatus('connected'))
