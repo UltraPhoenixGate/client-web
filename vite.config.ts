@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import solid from 'vite-plugin-solid'
 import UnoCss from 'unocss/vite'
-import legacy from '@vitejs/plugin-legacy'
 
 // https://vitejs.dev/config/
 // @ts-expect-error tauri is not defined in the browser

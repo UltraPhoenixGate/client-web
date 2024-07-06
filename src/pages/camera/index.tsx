@@ -125,12 +125,12 @@ function CameraItem(props: {
         >
           {loading()
             ? (
-              <div class="h-full flex items-center justify-center bg-fill2">
-                <i class="i-svg-spinners:bars-scale-fade text-gray-700" />
-              </div>
+                <div class="h-full flex items-center justify-center bg-fill2">
+                  <i class="i-svg-spinners:bars-scale-fade text-gray-700" />
+                </div>
               )
             : (
-              <img src={currentFrame()} class="h-full w-full" alt="Camera Frame"></img>
+                <img src={currentFrame()} class="h-full w-full" alt="Camera Frame"></img>
               )}
         </div>
       </div>

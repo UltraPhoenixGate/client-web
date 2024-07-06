@@ -123,7 +123,7 @@ function DataPanelCard(props: {
       </Show>
       <Show when={props.data.length > 0}>
         <div class="text-xl font-bold">
-          {formatter.format(Number(props.data[0].value[1]))}
+          {formatter.format(Number((props.data[0].value || [])[1]))}
           {props.render.unit}
         </div>
       </Show>
@@ -145,7 +145,7 @@ function DataPanelLine(props: {
       datasets: props.data.map((item) => {
         return {
           label: item.metric.__name__,
-          data: item.values.map(value => ({
+          data: (item.values || []).map(value => ({
             id: value[0],
             x: value[0] * 1000,
             y: Number(value[1]),
@@ -228,7 +228,7 @@ function DataPanelBar(props: {
       datasets: [
         {
           label: props.config.render.title,
-          data: props.data.map(item => Number(item.value[1])),
+          data: props.data.map(item => Number((item.value || [])[1])),
           fill: false,
           tension: 0.1,
         },
