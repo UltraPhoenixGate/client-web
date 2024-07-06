@@ -13,12 +13,13 @@ export function SystemInfo() {
     onError(err) {
       errorModal(err.message)
     },
+    refreshInterval: 5000,
   })
 
   return (
     <div>
-      <h1 class="mb-4 text-2xl font-bold">系统信息</h1>
-      <Show when={systemInfo() !== undefined}>
+      <h1 class="mb-4 text-xl font-bold">系统信息</h1>
+      <Show when={systemInfo()}>
         <div class="grid grid-cols-3 gap-4">
           <InfoItem label="系统版本" value={systemInfo()!.version} />
           <InfoItem label="系统负载" value={systemInfo()!.load} />
@@ -36,11 +37,11 @@ interface InfoItemProps {
   value: string | number
 }
 
-function InfoItem({ label, value }: InfoItemProps) {
+function InfoItem(props: InfoItemProps) {
   return (
     <Card>
-      <div class="text-gray-500">{label}</div>
-      <div class="text-lg font-semibold">{value}</div>
+      <div class="text-gray-500">{props.label}</div>
+      <div class="text-lg font-semibold">{props.value}</div>
     </Card>
   )
 }

@@ -1,7 +1,8 @@
-import { batch, createEffect, createSignal } from 'solid-js'
+import { batch, createEffect, createSignal, onCleanup } from 'solid-js'
 
 export function useRequest<Parma, Res>(fn: (p: Parma) => Promise<Res>, initialParams: Parma, config?: {
   onError?: (err: Error) => void
+  refreshInterval?: number
 }) {
   const [data, setData] = createSignal<Res>()
   const [loading, setLoading] = createSignal(true)
@@ -28,6 +29,17 @@ export function useRequest<Parma, Res>(fn: (p: Parma) => Promise<Res>, initialPa
     params() // 依赖 params 的变化
     refresh()
   })
+
+  if (config?.refreshInterval) {
+    createEffect(() => {
+      const timer = setInterval(() => {
+        refresh()
+      }, config.refreshInterval)
+      onCleanup(() => {
+        clearInterval(timer)
+      })
+    })
+  }
 
   return { data, loading, error, refresh, setParams }
 }
