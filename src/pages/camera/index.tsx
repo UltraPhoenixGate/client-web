@@ -130,7 +130,7 @@ function CameraItem(props: {
           {loading()
             ? (
                 <div class="h-full flex items-center justify-center bg-fill2">
-                  <i class="i-svg-spinners:bars-scale-fade text-gray-700" />
+                  <i class="i-svg-spinners:bars-scale-fade mr-2 text-gray-700" />
                 </div>
               )
             : (

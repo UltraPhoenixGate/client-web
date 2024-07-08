@@ -1,5 +1,5 @@
 import { For, Match, Show, Switch, createSignal } from 'solid-js'
-import type { AddActiveSensorParams, OnvifDevice } from 'ultraphx-js-sdk'
+import type { AddActiveSensorParams } from 'ultraphx-js-sdk'
 import { createStore } from 'solid-js/store'
 import Button from '@/components/Button'
 import { Form, FormItem } from '@/components/Form'
@@ -203,45 +203,178 @@ function AddManual() {
   )
 }
 
+interface MockedLocalDevice {
+  name: string
+}
+
 function SearchLocal() {
-  const [devices, setDevices] = createSignal<OnvifDevice[]>([])
+  const [devices, setDevices] = createSignal<MockedLocalDevice[]>([])
   const [loading, setLoading] = createSignal(true)
+  const { openModal } = useModal()
 
   function search() {
     setLoading(true)
+    setTimeout(() => {
+      setDevices([
+        {
+          name: 'Ultraphx_0F21',
+        },
+      ])
+      setLoading(false)
+    }, 300)
   }
 
-  async function add(device: OnvifDevice) {
+  search()
+
+  function add(device: MockedLocalDevice) {
+    openModal({
+      title: '连接本地设备',
+      content: () => {
+        return (
+          <ConnectLocal device={device} />
+        )
+      },
+    })
   }
 
   return (
-    <div class="w-500px centerCol">
-      <Button
-        onClick={search}
-        icon="i-fluent:globe-search-20-regular"
-        size="large"
-      >
-        搜索
-      </Button>
+    <div class="w-400px centerCol">
       <Show when={loading()}>
         <div class="mt-4 text-center">搜索中...</div>
       </Show>
       <For each={devices()}>
         {device => (
-          <div class="mt-4">
-            <Card>
-              <div class="mt-2">
-                <Button
-                  type="primary"
-                  onClick={() => add(device)}
-                >
-                  添加
-                </Button>
-              </div>
-            </Card>
-          </div>
+          <Card class="w-full centerRow justify-between">
+            <div>{device.name}</div>
+            <Button
+              type="primary"
+              onClick={() => add(device)}
+            >
+              添加
+            </Button>
+          </Card>
         )}
       </For>
+    </div>
+  )
+}
+
+function ConnectLocal(_props: {
+  device: MockedLocalDevice
+}) {
+  let form!: HTMLFormElement
+  const { client } = useClient()
+  const { closeAll } = useModal()
+
+  const [basicInfo, setBasicInfo] = createStore({
+    name: '',
+    description: '',
+  })
+
+  const [connectionInfo, setConnectionInfo] = createStore<AddActiveSensorParams['collectionInfo']>({
+    dataType: 'json',
+    collectionPeriod: 0,
+    collectionEndpoint: '',
+    ipAddress: '',
+    authToken: '',
+    customLabels: '',
+  })
+
+  const [localWifi, setLocalWifi] = createStore({
+    ssid: '',
+    password: '',
+  })
+
+  const [isAdding, setIsAdding] = createSignal(false)
+  const [addingStatus, setAddingStatus] = createSignal<string>('Add')
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+  async function add() {
+    if (!form.checkValidity()) {
+      form.reportValidity()
+      return
+    }
+    setIsAdding(true)
+    // 1. 连接设备
+    setIsAdding(true)
+    setAddingStatus('正在连接设备...')
+    await sleep(1600)
+    // 2. 连接WIFI
+    setAddingStatus('正在连接网络...')
+    await sleep(2400)
+    // 3. 获取设备信息
+    setAddingStatus('正在获取设备信息...')
+    await sleep(500)
+    // 4. 添加设备
+    setAddingStatus('正在添加设备...')
+    setConnectionInfo('collectionEndpoint', 'http://sensors.hk.dev.wearzdk.me/data/temperature-humidity')
+    setConnectionInfo('dataType', 'json')
+    setConnectionInfo('ipAddress', '192.168.43.182')
+    await client().client.addActiveSensor({
+      ...basicInfo,
+      collectionInfo: connectionInfo,
+    })
+    await sleep(100)
+    setAddingStatus('添加成功')
+    setIsAdding(false)
+    closeAll()
+  }
+
+  return (
+    <div>
+      <Show when={isAdding()}>
+        <div class="h-200px w-full center">
+          <i class="i-svg-spinners:bars-scale-fade text-gray-700" />
+          <span>
+            {addingStatus()}
+          </span>
+        </div>
+      </Show>
+      <Show when={!isAdding()}>
+        <h1 class="desc">设备信息</h1>
+        <Form
+          ref={form}
+          labelAlign="left"
+          labelWidth="80px"
+          class="mt-2 w-full"
+        >
+          <FormItem label="名称">
+            <Input
+              value={basicInfo.name}
+              onInput={v => setBasicInfo('name', v)}
+              required
+              placeholder="请输入输入名称"
+            />
+          </FormItem>
+          <FormItem label="描述">
+            <Input
+              value={basicInfo.description}
+              onInput={v => setBasicInfo('description', v)}
+              placeholder="可选，设备描述"
+            />
+          </FormItem>
+          <FormItem label="本地WIFI SSID">
+            <Input
+              value={localWifi.ssid}
+              onInput={v => setLocalWifi('ssid', v)}
+              required
+              placeholder="本地WIFI SSID"
+            />
+          </FormItem>
+
+          <FormItem label="本地WIFI 密码">
+            <Input
+              value={localWifi.password}
+              onInput={v => setLocalWifi('password', v)}
+              type="password"
+              placeholder="本地WIFI 密码，可为空"
+            />
+          </FormItem>
+
+          <Button onClick={add} type="primary" class="mt-4">
+            连接
+          </Button>
+        </Form>
+      </Show>
     </div>
   )
 }

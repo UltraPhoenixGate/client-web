@@ -42,6 +42,7 @@ interface ModalContextType {
   closeModal: (id: string) => void
   errorModal: (message: string) => void
   confirmModal: (params: ConfirmModalOptions) => void
+  closeAll: () => void
 }
 
 const ModalContext = createContext<ModalContextType>()
@@ -66,6 +67,11 @@ const ModalProvider: ParentComponent = (props) => {
     setModals(prev => prev.filter(modal => modal.id !== id))
     const modal = modals().find(modal => modal.id === id)
     modal?.onClose?.()
+  }
+
+  const closeAll = () => {
+    modals().forEach(modal => modal.onClose?.())
+    setModals([])
   }
 
   const confirmModal = (params: ConfirmModalOptions) => {
@@ -116,7 +122,7 @@ const ModalProvider: ParentComponent = (props) => {
   }
 
   return (
-    <ModalContext.Provider value={{ openModal, closeModal, errorModal, confirmModal }}>
+    <ModalContext.Provider value={{ openModal, closeModal, errorModal, confirmModal, closeAll }}>
       {props.children}
       <For each={modals()}>
         {(modalProps) => {
