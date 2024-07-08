@@ -39,7 +39,7 @@ export function Button(props: ButtonProps) {
   return (
     <button
       class={classes}
-      typeof={local.htmlType || 'button'}
+      type={local.htmlType || 'button'}
       disabled={local.disabled || props.loading}
       {...others}
     >

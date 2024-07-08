@@ -8,12 +8,13 @@ export interface SelectProps {
   placeholder?: string
   disabled?: boolean
   children?: any
+  required?: boolean
   [key: string]: any
 }
 
 export function Select(props: SelectProps) {
   const baseClasses = 'flex-1 border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 sm:text-sm focus:outline-none focus:ring-indigo-500'
-  const [local, others] = splitProps(props, ['value', 'class', 'onChange', 'options', 'disabled', 'placeholder'])
+  const [local, others] = splitProps(props, ['value', 'class', 'onChange', 'options', 'disabled', 'placeholder', 'required'])
   const classes = `${baseClasses} ${local.class || ''}`
   let select!: HTMLSelectElement
 
@@ -30,6 +31,7 @@ export function Select(props: SelectProps) {
       onInput={e => local.onChange?.(e.currentTarget.value)}
       class={classes}
       disabled={local.disabled}
+      required={local.required}
       {...others}
     >
       {/* <option value="" disabled>{local.placeholder || '请选择'}</option> */}

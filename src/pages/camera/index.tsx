@@ -1,4 +1,4 @@
-import { For, Show, createSignal, onMount } from 'solid-js'
+import { For, Show, createEffect, createSignal, onCleanup, onMount } from 'solid-js'
 import type { Camera } from 'ultraphx-js-sdk'
 import { ConnectNew } from './components/ConnectNew'
 import { useModal } from '@/utils/modalManager'
@@ -103,12 +103,16 @@ function CameraItem(props: {
     })
   }
 
-  onMount(() => {
+  createEffect(() => {
     getFrame()
 
-    setInterval(() => {
+    const timer = setInterval(() => {
       getFrame()
     }, 30000)
+
+    onCleanup(() => {
+      clearInterval(timer)
+    })
   })
 
   return (

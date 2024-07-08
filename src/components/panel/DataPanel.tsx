@@ -1,5 +1,5 @@
 import type { ParentProps } from 'solid-js'
-import { Match, Show, Switch, createEffect, createSignal, onMount } from 'solid-js'
+import { Match, Show, Switch, createEffect, createSignal, onCleanup, onMount } from 'solid-js'
 import { Chart, Colors, Title } from 'chart.js'
 import 'chart.js/auto'
 import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm'
@@ -46,7 +46,9 @@ export function DataPanel(props: DataPanelProps) {
         })
       }, props.config.refreshInterval * 1000)
 
-      return () => clearInterval(timer)
+      onCleanup(() => {
+        clearInterval(timer)
+      })
     }
   })
 
