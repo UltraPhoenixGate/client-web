@@ -255,8 +255,10 @@ function DataSourceForm(props: {
   const [availableMetrics, setAvailableMetrics] = createSignal<string[]>([])
   createEffect(async () => {
     console.log(source)
-    const actSource = JSON.parse(JSON.stringify(source))
+    const actSource = JSON.parse(JSON.stringify(source)) as DataSource
     actSource.labels.__name__ = ''
+    // 获取离散数据
+    actSource.timeRange.type = 'last15min'
     const allData = await fetchDataByDataSources([actSource])
     setAvailableMetrics(allData.map(item => item.metric.__name__))
   })

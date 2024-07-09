@@ -1,5 +1,5 @@
 import type { JSX, ParentComponent } from 'solid-js'
-import { For, createContext, createSignal, useContext } from 'solid-js'
+import { For, createContext, createEffect, createSignal, onCleanup, useContext } from 'solid-js'
 import Modal from '@/components/Modal'
 import type { ModalProps } from '@/components/Modal'
 import Button from '@/components/Button'
@@ -43,6 +43,7 @@ interface ModalContextType {
   errorModal: (message: string) => void
   confirmModal: (params: ConfirmModalOptions) => void
   closeAll: () => void
+  onModalEmpty: (fn: () => void) => void
 }
 
 const ModalContext = createContext<ModalContextType>()
@@ -121,8 +122,28 @@ const ModalProvider: ParentComponent = (props) => {
     return id
   }
 
+  const modalEmptyHandlers: (() => void)[] = []
+
+  const onModalEmpty = (fn: () => void) => {
+    modalEmptyHandlers.push(fn)
+
+    // 组件销毁时移除 handler
+    onCleanup(() => {
+      const index = modalEmptyHandlers.indexOf(fn)
+      if (index !== -1) {
+        modalEmptyHandlers.splice(index, 1)
+      }
+    })
+  }
+
+  createEffect(() => {
+    if (modals().length === 0) {
+      modalEmptyHandlers.forEach(fn => fn())
+    }
+  })
+
   return (
-    <ModalContext.Provider value={{ openModal, closeModal, errorModal, confirmModal, closeAll }}>
+    <ModalContext.Provider value={{ openModal, closeModal, errorModal, confirmModal, closeAll, onModalEmpty }}>
       {props.children}
       <For each={modals()}>
         {(modalProps) => {

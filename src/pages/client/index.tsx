@@ -10,6 +10,7 @@ import { useModal } from '@/utils/modalManager'
 export default function Home() {
   const {
     openModal,
+    onModalEmpty,
   } = useModal()
   function connectNewClient() {
     openModal({
@@ -19,7 +20,10 @@ export default function Home() {
   }
 
   const { client } = useClient()
-  const { data: clients, loading, refresh } = useRequest(client().client.getConnectedClients, {})
+  const { data: clients, loading, refresh } = useRequest(client().client.getConnectedClients, {}, {
+    // refreshInterval: 5000,
+  })
+  onModalEmpty(refresh)
   return (
     <div class="p-4">
       <div class="centerRow justify-between">

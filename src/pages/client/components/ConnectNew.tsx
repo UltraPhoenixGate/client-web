@@ -1,5 +1,5 @@
 import { For, Match, Show, Switch, createSignal } from 'solid-js'
-import type { AddActiveSensorParams } from 'ultraphx-js-sdk'
+import type { AddActiveSensorParams, EndpointsItem, ScannedSensorMeta } from 'ultraphx-js-sdk'
 import { createStore } from 'solid-js/store'
 import Button from '@/components/Button'
 import { Form, FormItem } from '@/components/Form'
@@ -203,30 +203,23 @@ function AddManual() {
   )
 }
 
-interface MockedLocalDevice {
-  name: string
-}
-
 function SearchLocal() {
-  const [devices, setDevices] = createSignal<MockedLocalDevice[]>([])
+  const [devices, setDevices] = createSignal<ScannedSensorMeta[]>([])
   const [loading, setLoading] = createSignal(true)
   const { openModal } = useModal()
+  const { client } = useClient()
 
   function search() {
     setLoading(true)
-    setTimeout(() => {
-      setDevices([
-        {
-          name: 'Ultraphx_0F21',
-        },
-      ])
+    client().client.scanActiveSensors().then((res) => {
+      setDevices(res)
       setLoading(false)
-    }, 300)
+    })
   }
 
   search()
 
-  function add(device: MockedLocalDevice) {
+  function add(device: ScannedSensorMeta) {
     openModal({
       title: '连接本地设备',
       content: () => {
@@ -245,12 +238,15 @@ function SearchLocal() {
       <For each={devices()}>
         {device => (
           <Card class="w-full centerRow justify-between">
-            <div>{device.name}</div>
+            <div>
+              <h3 class="text-base">{device.name}</h3>
+              <p class="text-sm text-text2">{device.description}</p>
+            </div>
             <Button
               type="primary"
               onClick={() => add(device)}
             >
-              添加
+              连接
             </Button>
           </Card>
         )}
@@ -259,64 +255,40 @@ function SearchLocal() {
   )
 }
 
-function ConnectLocal(_props: {
-  device: MockedLocalDevice
+function ConnectLocal(props: {
+  device: ScannedSensorMeta
 }) {
-  let form!: HTMLFormElement
   const { client } = useClient()
   const { closeAll } = useModal()
 
-  const [basicInfo, setBasicInfo] = createStore({
-    name: '',
-    description: '',
-  })
-
-  const [connectionInfo, setConnectionInfo] = createStore<AddActiveSensorParams['collectionInfo']>({
-    dataType: 'json',
-    collectionPeriod: 0,
-    collectionEndpoint: '',
-    ipAddress: '',
-    authToken: '',
-    customLabels: '',
-  })
-
-  const [localWifi, setLocalWifi] = createStore({
-    ssid: '',
-    password: '',
-  })
-
   const [isAdding, setIsAdding] = createSignal(false)
-  const [addingStatus, setAddingStatus] = createSignal<string>('Add')
-  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-  async function add() {
-    if (!form.checkValidity()) {
-      form.reportValidity()
-      return
-    }
-    setIsAdding(true)
-    // 1. 连接设备
+  const [addingStatus, setAddingStatus] = createSignal<string>('')
+  async function add(endpoint: EndpointsItem) {
     setIsAdding(true)
     setAddingStatus('正在连接设备...')
-    await sleep(1600)
-    // 2. 连接WIFI
-    setAddingStatus('正在连接网络...')
-    await sleep(2400)
-    // 3. 获取设备信息
-    setAddingStatus('正在获取设备信息...')
-    await sleep(500)
-    // 4. 添加设备
-    setAddingStatus('正在添加设备...')
-    setConnectionInfo('collectionEndpoint', 'http://sensors.hk.dev.wearzdk.me/data/temperature-humidity')
-    setConnectionInfo('dataType', 'json')
-    setConnectionInfo('ipAddress', '192.168.43.182')
-    await client().client.addActiveSensor({
-      ...basicInfo,
-      collectionInfo: connectionInfo,
+    if (endpoint.path.startsWith('/')) {
+      endpoint.path = endpoint.path.slice(1)
+    }
+    client().client.addActiveSensor({
+      name: props.device.name,
+      description: props.device.description,
+      collectionInfo: {
+        collectionEndpoint: `http://${props.device.ip}/${endpoint.path}`,
+        dataType: 'json',
+        collectionPeriod: 1,
+        ipAddress: props.device.ip,
+        authToken: '',
+        customLabels: '',
+      },
+    }).then(() => {
+      setAddingStatus('设备已连接')
+    }).catch((err) => {
+      setAddingStatus('连接失败')
+      console.error(err)
+    }).finally(() => {
+      setIsAdding(false)
+      closeAll()
     })
-    await sleep(100)
-    setAddingStatus('添加成功')
-    setIsAdding(false)
-    closeAll()
   }
 
   return (
@@ -330,50 +302,25 @@ function ConnectLocal(_props: {
         </div>
       </Show>
       <Show when={!isAdding()}>
-        <h1 class="desc">设备信息</h1>
-        <Form
-          ref={form}
-          labelAlign="left"
-          labelWidth="80px"
-          class="mt-2 w-full"
-        >
-          <FormItem label="名称">
-            <Input
-              value={basicInfo.name}
-              onInput={v => setBasicInfo('name', v)}
-              required
-              placeholder="请输入输入名称"
-            />
-          </FormItem>
-          <FormItem label="描述">
-            <Input
-              value={basicInfo.description}
-              onInput={v => setBasicInfo('description', v)}
-              placeholder="可选，设备描述"
-            />
-          </FormItem>
-          <FormItem label="本地WIFI SSID">
-            <Input
-              value={localWifi.ssid}
-              onInput={v => setLocalWifi('ssid', v)}
-              required
-              placeholder="本地WIFI SSID"
-            />
-          </FormItem>
-
-          <FormItem label="本地WIFI 密码">
-            <Input
-              value={localWifi.password}
-              onInput={v => setLocalWifi('password', v)}
-              type="password"
-              placeholder="本地WIFI 密码，可为空"
-            />
-          </FormItem>
-
-          <Button onClick={add} type="primary" class="mt-4">
-            连接
-          </Button>
-        </Form>
+        <h1 class="desc">请选择数据端点</h1>
+        <For each={props.device.endpoints}>
+          {endpoint => (
+            <Card class="w-full centerRow justify-between">
+              <div>
+                <h3 class="text-base">{endpoint.path}</h3>
+                <p class="text-sm text-text2">{endpoint.description}</p>
+              </div>
+              <Button
+                type="primary"
+                onClick={() => {
+                  add(endpoint)
+                }}
+              >
+                选择
+              </Button>
+            </Card>
+          )}
+        </For>
       </Show>
     </div>
   )
