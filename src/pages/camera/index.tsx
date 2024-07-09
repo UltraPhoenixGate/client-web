@@ -1,4 +1,4 @@
-import { For, Show, createEffect, createSignal, onCleanup, onMount } from 'solid-js'
+import { For, Show, createEffect, createSignal, onCleanup } from 'solid-js'
 import type { Camera } from 'ultraphx-js-sdk'
 import { ConnectNew } from './components/ConnectNew'
 import { useModal } from '@/utils/modalManager'
@@ -68,7 +68,7 @@ function CameraList() {
         <Show when={!loading()}>
           <For each={list()?.cameras || []}>
             {camera => (
-              <CameraItem camera={camera} />
+              <CameraItem onUpdated={refresh} camera={camera} />
             )}
           </For>
         </Show>
@@ -79,6 +79,7 @@ function CameraList() {
 
 function CameraItem(props: {
   camera: Camera
+  onUpdated?: () => void
 }) {
   const [currentFrame, setCurrentFrame] = createSignal<string>('')
   const [loading, setLoading] = createSignal(true)
@@ -90,9 +91,11 @@ function CameraItem(props: {
       setCurrentFrame(res.image)
     }).finally(() => {
       setLoading(false)
+    }).catch((err) => {
+      console.error(err)
     })
   }
-  const { openModal } = useModal()
+  const { openModal, confirmModal } = useModal()
 
   function openCamera(camera: Camera) {
     openModal({
@@ -115,13 +118,27 @@ function CameraItem(props: {
     })
   })
 
+  function handelDelete() {
+    confirmModal({
+      title: '删除设备',
+      content: '确定要删除该设备吗？',
+      async onOk() {
+        await client().camera.deleteCamera(props.camera.id)
+        props.onUpdated?.()
+      },
+    })
+  }
+
   return (
-    <div class="relative w-full pt-60%">
+    <div class="relative w-full overflow-hidden pt-70%">
       <div class="absolute inset-0 col border">
-        <div class="border-b bg-gray-200 p-2">
+        <div class="group h-40px row justify-between border-b bg-gray-200 p-2">
           <h3 class="text-base text-black font-semibold">
             {props.camera.name}
           </h3>
+          <Button class="!hidden !group-hover:inline-flex" onClick={handelDelete} type="danger" size="small">
+            删除
+          </Button>
         </div>
         <div
           onClick={() => openCamera(props.camera)}
@@ -134,7 +151,7 @@ function CameraItem(props: {
                 </div>
               )
             : (
-                <img src={currentFrame()} class="h-full w-full" alt="Camera Frame"></img>
+                <img src={currentFrame()} class="h-full w-full object-contain" alt="Camera Frame"></img>
               )}
         </div>
       </div>
@@ -158,7 +175,8 @@ function CameraPlayer(props: {
     return `${res.url}&token=${config.token}`
   }
 
-  onMount(() => {
+  createEffect(() => {
+    let player: any
     async function setup() {
       const playerUrl = await getFlvStreamUrl()
       const flvJs = (await import('flv.js')) as any
@@ -173,12 +191,17 @@ function CameraPlayer(props: {
         console.error(err)
         throw new Error(`播放器错误：${err}`)
       })
+      player = flvPlayer
     }
 
     setup().catch((err) => {
       errorModal(err.message)
     })
+    onCleanup(() => {
+      player?.destroy()
+    })
   })
+
   return (
     <div class="relative w-1024px">
       <video ref={video} class="h-auto w-full" controls></video>

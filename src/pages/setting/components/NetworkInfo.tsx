@@ -2,6 +2,7 @@ import { For, Show, createMemo } from 'solid-js'
 import type { NetworkInfoItem } from 'ultraphx-js-sdk'
 import { client } from '@/context/ClientContext'
 import { useRequest } from '@/hooks/useRequest'
+import Button from '@/components/Button'
 
 export function NetworkInfo() {
   const {
@@ -29,9 +30,18 @@ export function NetworkInfo() {
     }
   })
 
+  function handelOpenNetworkSetting() {
+    client().system.openNetworkSettings()
+  }
+
   return (
     <div>
-      <h1 class="mb-4 mt-4 text-xl font-bold">网络状态</h1>
+      <div class="mb-4 mt-4 row justify-between">
+        <h1 class="text-xl font-bold">网络状态</h1>
+        <Button onClick={handelOpenNetworkSetting}>
+          打开网络设置
+        </Button>
+      </div>
       <div class="grid grid-cols-3 gap-4">
         {(['ethernet', 'wifi'] as ['ethernet', 'wifi']).map(type => (
           <div class="mb-4 w-full">

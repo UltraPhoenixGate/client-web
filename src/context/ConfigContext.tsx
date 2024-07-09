@@ -2,7 +2,7 @@ import { createContext, createEffect, useContext } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
 const defaultConfig = {
-  backendUrl: 'https://core.hk.dev.wearzdk.me/api',
+  backendUrl: 'http://127.0.0.1:8080/api',
   token: '',
 }
 

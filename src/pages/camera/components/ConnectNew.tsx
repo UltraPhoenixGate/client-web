@@ -6,6 +6,7 @@ import { Form, FormItem } from '@/components/Form'
 import { Input } from '@/components/Input'
 import { useModal, useModalInner } from '@/utils/modalManager'
 import { useClient } from '@/context/ClientContext'
+import { Card } from '@/components/Card'
 
 export function ConnectNew() {
   const [status, setStatus] = createSignal<'ChooseCamera' | 'SearchCamera' | 'AddCamera'>('ChooseCamera')
@@ -54,6 +55,11 @@ function ChooseCamera({
 }
 
 function SearchCamera() {
+  const {
+    openModal,
+    errorModal,
+    closeAll,
+  } = useModal()
   const [devices, setDevices] = createSignal<OnvifDevice[]>([])
   const [loading, setLoading] = createSignal(true)
   const { client } = useClient()
@@ -69,6 +75,90 @@ function SearchCamera() {
     })
   }
 
+  function connect(device: OnvifDevice) {
+    openModal({
+      title: '连接到设备',
+      content() {
+        const [status, setStatus] = createSignal<string>('')
+        const [isConnecting, setIsConnecting] = createSignal(false)
+        const [auth, setAuth] = createStore({
+          user: '',
+          password: '',
+        })
+        async function connect() {
+          setIsConnecting(true)
+          setStatus('正在获取设备信息...')
+          const streamInfo = await client().camera.getOnvifDeviceInfo({
+            xAddr: device.xAddr,
+            ...auth,
+          })
+          setStatus('正在添加设备...')
+          await client().camera.addCamera({
+            name: device.name,
+            description: device.model,
+            streamUrl: streamInfo.streamUrl,
+            protocol: 'rtsp',
+          })
+          setStatus('添加成功')
+          await new Promise((resolve) => {
+            setTimeout(resolve, 1000)
+          })
+          closeAll()
+        }
+
+        function handelConnect() {
+          connect().catch((e) => {
+            errorModal(e.message)
+            setIsConnecting(false)
+          })
+        }
+
+        return (
+          <div class="w-400px col">
+            <Show when={isConnecting()}>
+              <div class="h-200px w-full center">
+                <i class="i-svg-spinners:bars-scale-fade text-gray-700" />
+                <span>
+                  {status()}
+                </span>
+              </div>
+            </Show>
+            <Show when={!isConnecting()}>
+              <p>
+                连接设备
+                {device.name}
+              </p>
+              <Form>
+                <FormItem label="用户名">
+                  <Input
+                    type="text"
+                    placeholder="请输入用户名，如果没有验证请留空"
+                    value={status()}
+                    onInput={(v) => {
+                      setAuth('user', v)
+                    }}
+                  />
+                </FormItem>
+                <FormItem label="密码">
+                  <Input
+                    type="password"
+                    value={status()}
+                    placeholder="请输入密码，如果没有设置密码请留空"
+                    onInput={(v) => {
+                      setAuth('password', v)
+                    }}
+                  />
+                </FormItem>
+              </Form>
+              <Button onClick={handelConnect} class="mt-4">连接</Button>
+            </Show>
+          </div>
+        )
+      },
+
+    })
+  }
+
   search()
 
   return (
@@ -77,21 +167,26 @@ function SearchCamera() {
         <p>正在本地网络中搜索...</p>
       </Show>
       <Show when={!loading()}>
-        <ul>
+        <div class="w-full">
           <Show when={devices().length === 0}>
             <p>未找到可用设备</p>
           </Show>
           <For each={devices()}>
             {device => (
-              <li>
-                <div>{device.name}</div>
-                <div>{device.manufacturer}</div>
-                <div>{device.model}</div>
-                <div>{device.xAddr}</div>
-              </li>
+              <Card class="w-full row items-center justify-between">
+                <div class="text-sm">
+                  <div>{device.name}</div>
+                  <div>{device.manufacturer}</div>
+                  <div>{device.model}</div>
+                  <div>{device.xAddr}</div>
+                </div>
+                <Button onClick={() => connect(device)}>
+                  连接
+                </Button>
+              </Card>
             )}
           </For>
-        </ul>
+        </div>
       </Show>
     </div>
   )
